@@ -1,0 +1,259 @@
+.main-container {
+  margin: 0 auto;
+  padding: 15px 15px 60px 15px;
+  max-width: 1230px;
+}
+
+.sub-container{
+  padding: 15px 0;
+  display: grid;
+  grid-template-columns: minmax(350px, 1.5fr) 1fr;
+}
+
+.block-container {
+  width: 100%;
+  height: 100%;
+}
+.block-container:nth-child(1) {
+  padding-right: 20px;
+}
+
+.content-container {
+  width: 100%;
+  padding: 0px;
+  margin-bottom: 30px;
+}
+.content-container--title {
+  color: #666;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+.content-container--message {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+}
+
+/* =================================== */
+/* 予約状況 */
+/* =================================== */
+.reservation-status {
+  background:#305DFF ;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px 0;
+}
+
+.reservation-history {
+  background:#999 ;
+}
+
+.reservation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.reservation-header__id {
+  display: flex;
+  align-items: center;
+}
+.reservation-header__id span {
+  outline: none;
+  border: none;
+  color:#eee;
+  font-weight: 500;
+  font-size: 0.8rem;
+}
+
+.reservation-header__button--container{
+  display: flex;
+}
+
+.reservation-header__change {
+  display: flex;
+  justify-content: center;
+  margin-left: 10px;
+}
+.reservation__header--button {
+  height: 30px;
+  padding: 0 10px;
+  background: #ddd;
+  color: #333;
+  border: none;
+  border-radius: 3px;
+  font-weight: 550;
+}
+
+.reservation-header__evaluation {
+  display: flex;
+  justify-content: right;
+}
+.reservation-header__evaluation--score {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+}
+.material-icons.evaluation-score {
+  font-size: 1.3rem; 
+}
+
+.reservation-header__delete {
+  grid-column: 3;
+  display: flex;
+  justify-content: right;
+}
+.reservation-delete-button {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: solid 2px white;
+  background: transparent;
+  font-weight: 800;
+  font-size: 2rem;
+  color: white;
+
+  display: block;
+  position: relative;
+} 
+
+.reservation-delete-button::before, .reservation-delete-button::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 3px; 
+  height: 20px; 
+  background: #fff;
+  color: white;
+}
+ 
+.reservation-delete-button::before {
+  transform: translate(-50%,-50%) rotate(45deg);
+}
+ 
+.reservation-delete-button::after {
+  transform: translate(-50%,-50%) rotate(-45deg);
+}
+
+.reservation-delete-button:hover {
+  background: #7992f8;
+}
+
+/* =================================== */
+/* 予約内容の表の部分 */
+/* =================================== */
+.reservation-table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.reservation-table tr{
+  width: 100%;
+}
+
+.reservation-table__header {
+  padding: 15x 15px;
+  width: 90px;
+  border-bottom: 1px solid #ddd;
+  background-color: transparent;
+  font-weight: 500;
+  font-size: 1rem;
+  color: #fff;
+  text-align: left;
+}
+
+.reservation-table__text {
+  padding: 5px 15px;
+  border-bottom: 1px solid #ddd;  
+  background-color: transparent;
+}
+.reservation-table__text a, .reservation-table__text span {
+  width: 100%;
+  outline: none;
+  border: none;
+  color:#fff;
+  font-weight: 600;
+  font-size: 1rem;
+}
+.reservation-table__text a{
+  font-weight: 500;
+  font-size: 0.8rem;
+}
+
+.reservation-table__row:last-child .reservation-table__header,
+.reservation-table__row:last-child .reservation-table__text {
+  border-bottom-width: 0;
+}
+
+/* =================================== */
+/*  店舗情報のタイル部分(右側)　*/
+/* =================================== */
+.panel-section {
+  margin-top: 0px;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+.panel-section__item {
+  border-radius: 5px;
+  background: white;
+  padding: 0;
+  text-align: center;
+  box-shadow: 2px 2px 2px gray;
+}
+.panel-section img {
+  width: 100%;
+  height: auto;
+  border-radius: 5px 5px 0 0;
+}
+.panel-section__item--content {
+  margin: 10px;
+}
+.panel-section__item--name {
+  text-align: left;
+  color: black;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+.panel-section__item--tag {
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.panel-section__item--button {
+  margin: 10px 0 5px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.panel-section__item--button--detail {
+  width: 100px;
+  height: 30px;
+  border-radius: 5px;
+  background: #305DFF;
+  color: white;
+  border: none;
+  font-size: 0.7rem;
+}
+.panel-section__item--button--detail:hover {
+  background: #c7c0ba;
+}
+
+.panel-section__item--button--favorite {
+  border: none;
+  background: transparent;
+}
+
+/* =================================== */
+/* レスポンシブデザイン対応 */
+/* =================================== */
+@media screen and (max-width: 768px){
+  .sub-container{
+    display: block;
+    height: auto;
+  }
+  .block-container{
+    width: 100%;
+  }
+}
