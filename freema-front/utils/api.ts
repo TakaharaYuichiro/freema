@@ -1,31 +1,24 @@
 import axios from 'axios';
 import { useAuthStore } from '@/stores/auth';
 
-const api = axios.create({
-  baseURL: 'http://localhost:8000/api',
-  withCredentials: true,
-});
-
-// api.interceptors.request.use((config) => {
-//   config.headers = config.headers || {};
-//   const auth = useAuthStore();
-//   auth.loadFromStorage();
-//   if (auth.token) {
-//     config.headers.Authorization = `Bearer ${auth.token}`;
-//   }
-//   return config;
-// });
-api.interceptors.request.use((config) => {
+export const useApi = () => {
+  const config = useRuntimeConfig();
   const auth = useAuthStore();
-  auth.loadFromStorage();
 
-  if (!config.headers) config.headers = {};
+  const api = axios.create({
+    baseURL: `${config.public.backUrlBase}/api`,
+    withCredentials: true,
+  });
 
-  if (auth.token) {
-    config.headers['Authorization'] = `Bearer ${auth.token}`;
-  }
+  api.interceptors.request.use((requestConfig) => {
+    if (!requestConfig.headers) requestConfig.headers = {};
 
-  return config;
-});
+    if (auth.token) {
+      requestConfig.headers['Authorization'] = `Bearer ${auth.token}`;
+    }
 
-export default api;
+    return requestConfig;
+  });
+
+  return api;
+};

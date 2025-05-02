@@ -17,7 +17,8 @@ return [
 
     'paths' => ['api/*', 'sanctum/csrf-cookie', 'login', 'logout'],
     'allowed_methods' => ['*'],
-    'allowed_origins' => ['http://localhost:3000', 'http://localhost:8000'],
+    'allowed_origins' => [env('APP_FRONTEND_URL', 'http://localhost:3000'), 'http://localhost:8000'],
+    // 'allowed_origins' => ['http://localhost:3000', 'http://localhost:8000'],
     // 'allowed_origins' => ['*'],
     'allowed_origins_patterns' => [],
     'allowed_headers' => ['*'],

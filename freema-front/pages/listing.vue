@@ -1,6 +1,8 @@
 <template>
   <div class="main-content">
-    <div class="title"><h2>商品の出品</h2></div>
+    <div class="title">
+      <h2>商品の出品</h2>
+    </div>
     <div class="group">
       <div class="sub-group-title">商品画像</div>
       <div class="preview__group">
@@ -20,22 +22,19 @@
         <div class="sub-group-title">カテゴリー</div>
         <div class="category-list">
           <template v-for="category in categories" :key="category.id">
-            <button 
+            <button
               :class="['category-list__item', category.selected ? 'category-list__item__selected' : 'category-list__item__not-selected']"
-              @click="selectCategory(category.id)"
-              >{{ category.name }}
+              @click="selectCategory(category.id)">{{ category.name }}
             </button>
           </template>
         </div>
       </div>
       <div class="sub-group sub-group__fixed-height">
         <div class="sub-group-title">商品の状態</div>
-        <div class="dropdown"> 
+        <div class="dropdown">
           <select v-model="conditionIndex" class="create-form__item__select">
             <option disabled value="0">選択してください</option>
-            <option v-for="(label, key) in PRODUCT_CONDITIONS" :key="key" :value="key">
-              {{ label }}
-            </option>
+            <option v-for="(label, key) in PRODUCT_CONDITIONS" :key="key" :value="Number(key)">{{ label }}</option>
           </select>
         </div>
         <div class="form__error" v-if="errorsConditionIndex">{{ errorsConditionIndex }}</div>
@@ -82,10 +81,10 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import type { Category } from '~/types/category';
 import { useField, useForm } from 'vee-validate';
 import * as yup from 'yup';
 import { PRODUCT_CONDITIONS } from '@/utils/constants'
+import type { Category } from '~/types/category';
 
 definePageMeta({ middleware: 'auth' });
 
@@ -99,9 +98,10 @@ interface FormValues {
   conditionIndex: number;
 }
 
-const { get, post, postImage } = useAuth();
+const { get, post } = useAuth();
 const auth = useAuthStore();
 const router = useRouter();
+const isLoading = ref(false);   // ボタン連続くリック防止用フラグ
 
 const schema = yup.object({
   productName: yup.string().min(3, '商品名は3文字以上必要です').required('商品名は必須です'),
@@ -120,8 +120,6 @@ const { meta } = useForm<FormValues>({
 });
 
 const isFormValid = computed(() => meta.value.valid);
-
-// 各フィールドのバリデーション設定
 const { value: productName, errorMessage: errorsProductName, meta: metaProductName } = useField<string>('productName');
 const { value: productPrice, errorMessage: errorsProductPrice, meta: metaProductPrice } = useField<number>('productPrice');
 const { value: conditionIndex, errorMessage: errorsConditionIndex, meta: metaConditionIndex } = useField<number>('conditionIndex');
@@ -138,7 +136,7 @@ const readCategories = async () => {
       name: datum.name,
       selected: false,
     }));
-    
+
   } catch (err) {
     console.error('読み込み失敗', err);
   }
@@ -147,7 +145,7 @@ const readCategories = async () => {
 const selectCategory = (id: number) => {
   const targetCategory = categories.value.find(x => x.id == id);
   if (targetCategory) {
-    targetCategory.selected = ! targetCategory.selected ;
+    targetCategory.selected = !targetCategory.selected;
   }
 }
 
@@ -157,9 +155,6 @@ const imageSrc = computed(() => {
   if (previewUrl.value) {
     return previewUrl.value;
   }
-  // if (auth.user?.img_filename) {
-  //   return `/images/${auth.user.img_filename}`; 
-  // }
   return '/images/defaultImages/noimage.png';
 });
 
@@ -180,31 +175,18 @@ const changeFile = async () => {
   }
 }
 
-
-
-
 const submitData = async () => {
-  // 画像アップロード
+  if (isLoading.value) return
+  isLoading.value = true
+
+  // 商品画像アップロード
   let imgFilePath = '';
   if (selectedFile.value) {
     const formData = new FormData()
     formData.append('image', selectedFile.value)
-  
+
     try {
-      // const response = await fetch('/api/upload', {
-      //   method: 'POST',
-      //   body: formData,
-      // });
-
-      const response = await post('/upload_image',  formData);
-
-
-      // // 結果の型を明示（例：url プロパティを含む場合）
-      // const result: { url: string } = await response.json();
-      // imgFilePath = result.url;
-      // console.log('アップロード成功:', result);
-
-      // console.log('商品画像アップロード成功');
+      const response = await post('/upload_image', formData);
       imgFilePath = response.path;
 
       // アップロード後にプレビュー URL を解除する（メモリ開放）
@@ -214,12 +196,12 @@ const submitData = async () => {
     } catch (err) {
       console.error('アップロード失敗:', err)
       alert('データのアップロードに失敗しました。');
-      return;
+      router.push('/mypage');
     }
   }
 
   // 商品データのアップロード
-  try{
+  try {
     const buffProducts = {
       user_id: auth.user.id,
       name: productName.value,
@@ -234,9 +216,9 @@ const submitData = async () => {
     const resp1 = await post('/products', buffProducts);
     const product_id = resp1.data.id;
 
-    for(let category of categories.value) {
+    for (let category of categories.value) {
       if (category.selected) {
-        const category_product = {product_id: product_id, category_id: category.id};
+        const category_product = { product_id: product_id, category_id: category.id };
         await post('/category_products', category_product);
       }
     }
@@ -246,6 +228,7 @@ const submitData = async () => {
   } catch (err) {
     console.error('アップロード失敗:', err)
     alert('データのアップロードに失敗しました。');
+    router.push('/mypage');
   }
 }
 
@@ -270,39 +253,41 @@ onMounted(async () => {
 .group {
   padding: 20px 0;
 }
+
 .group-title {
   margin: 10px 0;
   padding: 3px 0;
   border-bottom: 1px solid gray;
   font-weight: bold;
-  font-size:larger;
+  font-size: larger;
   color: #666;
 }
 
 .preview__group {
   display: flex;
   justify-content: space-between;
-  align-items:center;
+  align-items: center;
   margin: 0 0 20px;
   border: 1px dashed #aaa;
 }
+
 .preview__container {
   padding: 10px;
   max-width: 400px;
-  border-radius: 2px; 
+  border-radius: 2px;
 }
 
 .preview__img {
   width: 100%;
 }
 
-.preview__input-container{
+.preview__input-container {
   padding: 10px;
 }
 
 .file-upload-button {
   border: 1px solid #FF5656;
-  color:#FF5656;
+  color: #FF5656;
   background: transparent;
   border-radius: 10px;
   font-size: 12px;
@@ -359,17 +344,18 @@ onMounted(async () => {
 
 .category-list__item__not-selected {
   background: transparent;
-  color:#FF5656;
+  color: #FF5656;
 }
+
 .category-list__item:hover {
   background: #FFc0c0;
 }
 
 .dropdown {
   position: relative;
-  display:block;
-  margin-top:0.5em;
-  padding:0;
+  display: block;
+  margin-top: 0.5em;
+  padding: 0;
 }
 
 .dropdown::after {
@@ -387,15 +373,16 @@ onMounted(async () => {
 }
 
 .dropdown select {
-  width:100%;
-  margin:0;
-  background:transparent;
+  width: 100%;
+  margin: 0;
+  background: transparent;
   border: 1px solid gray;
   border-radius: 3px;
   padding: .3em 1.9em .3em .8em;
 }
 
-.input-text input, .input-text textarea {
+.input-text input,
+.input-text textarea {
   width: 100%;
   border-radius: 3px;
   padding: 5px 2px;
@@ -442,7 +429,7 @@ onMounted(async () => {
 }
 
 .img-section__img {
-  width:100%;
+  width: 100%;
   max-width: 500px;
 }
 
@@ -464,10 +451,11 @@ onMounted(async () => {
 
 .info-section__price {
   padding: 10px 0;
-  display: flex;  
+  display: flex;
 }
 
-.info-section__price__before, .info-section__price__after {
+.info-section__price__before,
+.info-section__price__after {
   font-size: medium;
   margin: auto 0 0;
 }

@@ -2,8 +2,6 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\RegisterdUserController;
-use App\Http\Controllers\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\EmailVerificationController;
@@ -15,8 +13,7 @@ use App\Http\Controllers\CategoryProductController;
 use App\Http\Controllers\EvaluationController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\ImageUploadController;
-
-
+use App\Http\Controllers\PaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,54 +26,30 @@ use App\Http\Controllers\ImageUploadController;
 |
 */
 
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
   return response()->json($request->user());
 });
 
-
-// ログイン関連のルート
-// Route::post('/register',[RegisterdUserController::class,'store']);
-// Route::post('/login',[AuthenticatedSessionController::class,'store']);
-// Route::post('/logout',[AuthenticatedSessionController::class,'destroy'])->middleware('auth:sanctum');
-
-
-// Route::post('/login', [LoginController::class, 'login']);
-// Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth:sanctum');
-
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/email/verification-notification', [EmailVerificationController::class, 'notification'])->middleware('auth:sanctum');
-Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verification'])
-    ->middleware(['signed', 'auth:sanctum'])
-    ->name('verification.verify');
-// Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verification'])
-//     ->middleware(['signed'])
-//     ->name('verification.verify');
-Route::post('/email/resend', function (Request $request) {
-  if ($request->user()->hasVerifiedEmail()) {
-      return response()->json(['message' => 'すでに確認済みです。'], 400);
-  }
-  $request->user()->sendEmailVerificationNotification();
-  return response()->json(['message' => '確認メールを再送しました。']);
-})->middleware(['auth:sanctum']);
+Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verification'])->middleware(['signed', 'auth:sanctum'])->name('verification.verify');
+Route::post('/email/resend', [EmailVerificationController::class, 'resend'])->middleware(['auth:sanctum']);
 
-Route::apiResource('/users', UserController::class);
-Route::apiResource('/products', ProductController::class);
-Route::apiResource('/categories', CategoryController::class);
-Route::apiResource('/evaluations', EvaluationController::class);
-Route::apiResource('/purchases', PurchaseController::class);
-
-Route::get("purchased_products/{user_id}", [ProductController::class, 'getPurchasedProducts']);
-// Route::get("products_except_mine/{user_id}", [ProductController::class, 'getProductsExceptMine']);
+Route::apiResource('/users', UserController::class)->middleware(['auth:sanctum']);
+Route::apiResource('/purchases', PurchaseController::class)->middleware(['auth:sanctum']);
+Route::apiResource('/products', ProductController::class); // auth:sanctumのmiddlewareは、Controller側で制御
+Route::apiResource('/categories', CategoryController::class); // auth:sanctumのmiddlewareは、Controller側で制御
+Route::apiResource('/evaluations', EvaluationController::class);  // auth:sanctumのmiddlewareは、Controller側で制御
 
 Route::post('category_products', [CategoryProductController::class, 'store']);
 Route::delete('category_products', [CategoryProductController::class, 'destroy']);
+Route::get('/get_favorites', [FavoriteController::class, 'getFavorites'])->middleware('auth:sanctum');
+Route::get('/count_favorites/{product_id}', [FavoriteController::class, 'countFavorites']);
+Route::post('/invert_favorite', [FavoriteController::class, 'invertFavorite']);
+Route::post('/upload_image', [ImageUploadController::class, 'upload'])->middleware('auth:sanctum');
 
-Route::get('/getFavoriteStates/{user_id}', [FavoriteController::class, 'getFavoriteStates']);
-Route::get('/countFavorites/{product_id}', [FavoriteController::class, 'countFavorites']);
-Route::post('/setFavoriteStates', [FavoriteController::class, 'setFavoriteStates']);
+Route::post('/payment', [PaymentController::class, 'payment'])->middleware('auth:sanctum');
+Route::post('/konbini-payment', [PaymentController::class, 'konbiniPayment'])->middleware('auth:sanctum');
+Route::post('/konbini-payment/complete', [PaymentController::class, 'konbiniPaymentComplete'])->middleware('auth:sanctum');
 
-Route::post('/upload_image', [ImageUploadController::class, 'upload']);

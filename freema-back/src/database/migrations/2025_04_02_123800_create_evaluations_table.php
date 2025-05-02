@@ -6,34 +6,32 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateEvaluationsTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        Schema::create('evaluations', function (Blueprint $table) {
-            $table->id();
-            // $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('user_id')->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
-            // $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
-            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
-            $table->tinyInteger('score');
-            $table->text('comment')->nullable();
-            $table->timestamps();
+  /**
+   * Run the migrations.
+   *
+   * @return void
+   */
+  public function up()
+  {
+    Schema::create('evaluations', function (Blueprint $table) {
+      $table->id();
+      // $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+      $table->foreignId('user_id')->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
+      // $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
+      $table->foreignId('product_id')->constrained()->cascadeOnDelete();
+      $table->tinyInteger('score');
+      $table->text('comment')->nullable();
+      $table->timestamps();
+    });
+  }
 
-        });
-
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::dropIfExists('evaluations');
-    }
+  /**
+   * Reverse the migrations.
+   *
+   * @return void
+   */
+  public function down()
+  {
+    Schema::dropIfExists('evaluations');
+  }
 }

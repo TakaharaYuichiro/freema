@@ -3,15 +3,25 @@
     <div class="switching-section">
       <div class="switching__button-container">
         <client-only>
-          <button class="switching-button" :style="{ color: (mode == 0) ? 'red' : 'gray' }"
+          <button class="switching-button" :style="{ color: (mode === 0) ? 'red' : 'gray' }"
             @click="switchMode(0)">おすすめ</button>
-          <button class="switching-button" :disabled="!auth.user" :style="{ color: (mode == 1) ? 'red' : 'gray' }"
+          <button class="switching-button" :disabled="!auth.user" :style="{ color: (mode === 1) ? 'red' : 'gray' }"
             @click="switchMode(1)">マイリスト</button>
         </client-only>
       </div>
     </div>
+
     <div class="panel-section">
-      <ProductPanel :products="products" @callParentMethod="toggleFavorite" />
+      <Transition :name="transitionName" mode="out-in">
+        <div :key="mode">
+          <div v-if="mode === 0">
+            <ProductPanel :products="products" @toggleFavorite="toggleFavorite" />
+          </div>
+          <div v-else>
+            <ProductPanel :products="favoriteProducts" @toggleFavorite="toggleFavorite" />
+          </div>
+        </div>
+      </Transition>
     </div>
   </div>
 </template>
@@ -23,23 +33,28 @@ import { useSearchStore } from '@/stores/search'
 import useAuth from '~/composables/useAuth';
 import type { Product } from '~/types/product';
 import type { ProductExp } from '~/types/productExp';
-import Purchase from './purchase.vue';
 
 const search = useSearchStore()
 const auth = useAuthStore();
 const { get, post } = useAuth();
-
+const transitionName = ref('slide-left');
 const mode = ref<number>(0);
+
 const switchMode = (mode0: number) => {
+  if (mode0 > mode.value) {
+    transitionName.value = 'slide-left'
+  } else if (mode0 < mode.value) {
+    transitionName.value = 'slide-right'
+  }
   mode.value = mode0;
-  readProducts();
 }
 
 const allProducts = ref<ProductExp[]>([]);
 const products = ref<ProductExp[]>([]);
+const favoriteProducts = ref<ProductExp[]>([]);
 const readProducts = async () => {
   try {
-    const url = auth.user ? `/products?except_user_id=${auth.user.id}` : '/products';
+    const url = '/products';
     const resp = await get(url);
 
     allProducts.value = resp.data.map((datum: Product) => ({
@@ -59,17 +74,16 @@ const readProducts = async () => {
     }));
 
     if (auth.user) {
-      const resp2 = await get(`/getFavoriteStates/${auth.user.id}`);
+      allProducts.value = allProducts.value.filter(product => product.user_id != auth.user.id); // 自分が出品した商品を除外
+      const resp2 = await get(`/get_favorites`);
       const favoriteIds = new Set(resp2.data.map((item: any) => item.product_id));
       for (const product of allProducts.value) {
         product.is_favorite = favoriteIds.has(product.id);
       }
     }
-
     updateSearchResults();
-
   } catch (err) {
-    console.log('読み込み失敗', err);
+    console.error('読み込み失敗', err);
   }
 };
 
@@ -82,16 +96,17 @@ const updateSearchResults = () => {
   products.value = allProducts.value.filter(product => {
     const matchesKeywords = keywords.every(kw =>
       product.name.toLowerCase().includes(kw) ||
-      product.brand.toLowerCase().includes(kw) ||
-      product.content.toLowerCase().includes(kw)
+      product.brand?.toLowerCase().includes(kw) ||
+      product.content?.toLowerCase().includes(kw)
     )
-    const matchesFavorite = mode.value !== 1 || product.is_favorite
-    return matchesKeywords && matchesFavorite
-  })
+    return matchesKeywords;
+  });
+
+  favoriteProducts.value = products.value.filter(product => product.is_favorite);
 }
 
 watch(() => search.triggerSearch, () => {
-  updateSearchResults()
+  updateSearchResults();
 })
 
 const toggleFavorite = async (product_id: number) => {
@@ -102,13 +117,13 @@ const toggleFavorite = async (product_id: number) => {
 
   try {
     // この商品のいいねをサーバーでチェックしオンならオフに、オフならオンにする。変更後のいいね状態をrespStateで受ける。
-    const respState = await post("/setFavoriteStates", {
+    const respState = await post("/invert_favorite", {
       'user_id': auth.user.id,
       'product_id': product_id
     })
 
     // この商品につけられているいいねの数をカウントする
-    const respCount = await get(`/countFavorites/${product_id}`);
+    const respCount = await get(`/count_favorites/${product_id}`);
 
     // この商品のオフジェクトを取得し、いいね関連のプロパティを更新
     const targetProduct = allProducts.value.find(x => x.id == product_id);
@@ -116,8 +131,11 @@ const toggleFavorite = async (product_id: number) => {
       targetProduct.favorites_count = respCount.data.count;
       targetProduct.is_favorite = respState.is_favorite;
     }
+
+    updateSearchResults();
+
   } catch (err) {
-    console.log('お気に入り書き込み失敗', err);
+    console.error('お気に入り書き込み失敗', err);
   }
 }
 
@@ -125,7 +143,6 @@ onMounted(async () => {
   auth.loadFromStorage();
   await readProducts();
 });
-
 </script>
 
 <style scoped>
@@ -166,5 +183,57 @@ onMounted(async () => {
   margin: 30px auto;
   padding: 15px;
   max-width: 1230px;
+}
+
+/* 左へスライド */
+.slide-left-enter-active,
+.slide-left-leave-active {
+  transition: all 0.25s ease;
+}
+
+.slide-left-enter-from {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.slide-left-enter-to {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.slide-left-leave-from {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.slide-left-leave-to {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+/* 右へスライド */
+.slide-right-enter-active,
+.slide-right-leave-active {
+  transition: all 0.25s ease;
+}
+
+.slide-right-enter-from {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+.slide-right-enter-to {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.slide-right-leave-from {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.slide-right-leave-to {
+  transform: translateX(100%);
+  opacity: 0;
 }
 </style>

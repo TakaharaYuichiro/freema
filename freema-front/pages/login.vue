@@ -33,47 +33,47 @@
 </template>
 
 <script setup lang="ts">
-// import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { useField, useForm } from 'vee-validate';
 import * as yup from 'yup';
-// import { useRouter } from 'vue-router';
 import { computed } from 'vue';
-// import axios from 'axios';
 import useAuth from '~/composables/useAuth';
 
 const router = useRouter();
+const { login, error } = useAuth();
+const isLoading = ref(false);   // ボタン連続クリック防止用フラグ
 
 interface FormValues {
   email: string;
   password: string;
 }
 const schema = yup.object({
-  email: yup.string().email('有効なメールアドレスを入力してください').required('メールアドレスは必須です'),
-  password: yup.string().min(8, 'パスワードは8文字以上必要です').required('パスワードは必須です')
+  email: yup.string().email('有効なメールアドレスを入力してください').required('メールアドレスを入力してください'),
+  password: yup.string().min(8, 'パスワードは8文字以上で入力してください').required('パスワードを入力してください')
 });
 
 const { meta } = useForm<FormValues>({ validationSchema: schema });
 const isFormValid = computed(() => meta.value.valid);
 
-// 各フィールドのバリデーション設定
 const { value: email, errorMessage: errorsEmail, meta: metaEmail } = useField<string>('email');
 const { value: password, errorMessage: errorsPassword, meta: metaPassword } = useField<string>('password');
 
-const { login, error } = useAuth();
-
 const handleLogin = async () => {
+  if (isLoading.value) return
+  isLoading.value = true;
+
   const responceCode = await login(email.value, password.value);
   if (responceCode == 1) {
     // ログイン成功　→ ホーム画面へ
     router.push('/');
   } else if (responceCode == -1) {
     // email_verified_atがnull (仮登録の状態)　→　「メール確認してください」画面へ
-    alert("メール確認が未済です");
-    router.push({ path: '/verify-info' , query :{ no_auto_sending: 1 }});
+    alert("メール確認が未済です。");
+    router.push({ path: '/verify-info', query: { no_auto_sending: 1 } });
   } else {
     // ログイン失敗
-    alert("ログインに失敗しました: " + error.value);
+    alert("ログイン情報が登録されていません。");
   }
+  isLoading.value = false;
 };
 </script>
 

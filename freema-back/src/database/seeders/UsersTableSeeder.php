@@ -27,27 +27,7 @@ class UsersTableSeeder extends Seeder
                 'address' => 'テスト住所'
 
             ],
-            // [
-            //     'name' => 'テスト店舗代表者',
-            //     'email' => 'manager@ex.com',
-            //     'password' => bcrypt('test_pw1234'),
-            //     'role' => 11,
-            //     'email_verified_at' => new DateTime(),
-            // ],
-            // [
-            //     'name' => '岡本 玲央奈',
-            //     'email' => 'okamoto_reona@example.com',
-            //     'password' => bcrypt('test_pw1234'),
-            //     'role' => 11,
-            //     'email_verified_at' => null,
-            // ],
-            // [
-            //     'name' => '鈴木 絵里子',
-            //     'email' => 'suzuki818@example.org',
-            //     'password' => bcrypt('test_pw1234'),
-            //     'role' => 11,
-            //     'email_verified_at' => null,
-            // ],
+
             [
                 'name' => 'テスト利用者',
                 'email' => 'test@ex.com',
@@ -57,6 +37,16 @@ class UsersTableSeeder extends Seeder
                 'zipcode' => '123-4567',
                 'address' => 'テスト住所'
             ],
+            [
+              'name' => 'テストユーザー1',
+              'email' => 'test1@test.com',
+              'password' => bcrypt('test_pw1234'),
+              'role' => 21,
+              'email_verified_at' => new DateTime(),
+              'zipcode' => '123-4567',
+              'address' => 'テスト住所'
+          ],
+
         //     [
         //         'name' => 'テスト利用者2',
         //         'email' => 'test2@ex.com',

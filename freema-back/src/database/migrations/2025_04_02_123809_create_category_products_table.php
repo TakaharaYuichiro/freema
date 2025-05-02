@@ -6,28 +6,28 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateCategoryProductsTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        Schema::create('category_products', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('product_id')->constrained()->onDelete('cascade'); // 商品ID
-            $table->foreignId('category_id')->constrained()->onDelete('cascade'); // カテゴリーID
-            $table->timestamps();
-        });
-    }
+  /**
+   * Run the migrations.
+   *
+   * @return void
+   */
+  public function up()
+  {
+    Schema::create('category_products', function (Blueprint $table) {
+      $table->id();
+      $table->foreignId('product_id')->constrained()->onDelete('cascade'); // 商品ID
+      $table->foreignId('category_id')->constrained()->onDelete('cascade'); // カテゴリーID
+      $table->timestamps();
+    });
+  }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::dropIfExists('category_products');
-    }
+  /**
+   * Reverse the migrations.
+   *
+   * @return void
+   */
+  public function down()
+  {
+    Schema::dropIfExists('category_products');
+  }
 }

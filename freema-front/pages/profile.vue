@@ -43,6 +43,10 @@
       </div>
     </div>
 
+    <div class="remark">
+      郵便番号と住所は、このフォームでは入力必須ではありませんが、商品購入時には入力が必要です(商品購入フォームで入力することも可能です)。
+    </div>
+
     <div class="button-group">
       <client-only>
         <button class="button" :disabled="!auth.user || !isFormValid" @click="uploadData">更新する</button>
@@ -58,8 +62,6 @@ import * as yup from 'yup';
 
 definePageMeta({ middleware: 'auth' });
 
-const router = useRouter();
-
 interface FormValues {
   name: string;
   zipcode: string;
@@ -67,6 +69,7 @@ interface FormValues {
   building: string;
 }
 
+const router = useRouter();
 const { get, post, put } = useAuth();
 const auth = useAuthStore();
 
@@ -76,10 +79,9 @@ const schema = yup.object({
     .string()
     .nullable()
     .notRequired()
-    // .matches(/^[0-9]{7}$|^[0-9]{3}-[0-9]{4}$/, '郵便番号の形式が正しくありません。'),
     .matches(/^\d{7}$|^\d{3}-\d{4}$/, {
       message: '郵便番号の形式が正しくありません(数値7桁 または 3桁-4桁)。',
-      excludeEmptyString: true, // 空文字にはマッチをスキップ
+      excludeEmptyString: true,
     }),
   address: yup.string().max(191, '住所は191文字以内としてください'),
   building: yup.string().max(191, '建物名は191文字以内としてください'),
@@ -97,7 +99,6 @@ const { setValues, meta } = useForm<FormValues>({
 
 const isFormValid = computed(() => meta.value.valid);
 
-// 各フィールドのバリデーション設定
 const { value: name, errorMessage: errorsName, meta: metaName } = useField<string>('name');
 const { value: zipcode, errorMessage: errorsZipcode, meta: metaZipcode } = useField<string>('zipcode');
 const { value: address, errorMessage: errorsAddress, meta: metaAddress } = useField<string>('address');
@@ -115,7 +116,6 @@ const setInitialValues = () => {
 }
 
 const previewUrl = ref<string | null>(null);
-
 const imageUrlBase = useRuntimeConfig().public.imageUrlBase;
 const imageSrc = computed(() => {
   if (previewUrl.value) {
@@ -129,7 +129,6 @@ const imageSrc = computed(() => {
 
 const selectedFile = ref<File | null>(null);
 const fileInput = ref<HTMLInputElement | null>(null)
-
 const handleFileChange = (event: Event) => {
   const target = event.target as HTMLInputElement
   if (target.files && target.files.length > 0) {
@@ -152,25 +151,15 @@ const uploadData = async () => {
     return;
   }
 
-  // 画像アップロード
+  // ユーザーアイコン画像アップロード
   let imgFileName = '';
   if (selectedFile.value) {
     const formData = new FormData()
     formData.append('image', selectedFile.value)
 
     try {
-      // const response = await fetch('/api/upload', {
-      //   method: 'POST',
-      //   body: formData,
-      // });
-      const response = await post('/upload_image',  formData);
-
-      // // 結果の型を明示（例：url プロパティを含む場合）
-      // const result: { url: string } = await response.json();
-      // imgFileName = result.url;
-      // console.log('アイコン画像アップロード成功',response);
+      const response = await post('/upload_image', formData);
       imgFileName = response.path;
-      // console.log('アイコン画像アップロード成功2');
 
       // アップロード後にプレビュー URL を解除する（メモリ開放）
       URL.revokeObjectURL(previewUrl.value!);
@@ -197,7 +186,6 @@ const uploadData = async () => {
 
     const resp2 = await put(`/users/${auth.user.id}`, buffUser);
     if (resp2) {
-      // alert('更新しました!');
       auth.updateUser(buffUser);  // localStrageをアップデート
       router.push('/');
     } else {
@@ -313,5 +301,13 @@ onMounted(async () => {
 
 .button:disabled {
   background: #ccc;
+}
+
+.remark {
+  background: #f0f0f0;
+  padding: 20px 10px;
+  margin: 10px 0;
+  color: #333;
+  font-size: smaller;
 }
 </style>

@@ -1,12 +1,13 @@
 import { ref } from 'vue';
-import api from '@/utils/api';
+import { useApi } from '@/utils/api'
 import { useAuthStore } from '@/stores/auth';
 
 export default function useAuth() {
+  const api = useApi();
   const user = ref(null);
   const error = ref(null);
   const auth = useAuthStore();
-  
+
   const register = async (name: string, email: string, password: string, password_confirmation: string) => {
     error.value = null;
     // まずログアウトする（Sanctum のトークンもクリア）
@@ -16,13 +17,13 @@ export default function useAuth() {
       auth.login(res.data.token, null); // Pinia + localStorageに保存。まだ仮登録なのでユーザー情報(第2引数)はnullにしておく
       return true;
     } catch (e) {
-      // error.value = e;
+
       console.error('仮登録に失敗しました');
       return false;
     }
   };
 
-  const verifyEmail = async (id: string, hash: string, expires:string, signature:string, token: string) => {
+  const verifyEmail = async (id: string, hash: string, expires: string, signature: string, token: string) => {
     try {
       const response = await api.get(`/email/verify/${id}/${hash}?expires=${expires}&signature=${signature}`, {
         headers: {
@@ -89,19 +90,6 @@ export default function useAuth() {
     }
   };
 
-  const postImage = async (url: string, data?: any) => {
-    try {
-      const response = await api.post(url, data, {
-        headers: data instanceof FormData ? {} : {
-          'Content-Type': 'application/json',
-        }
-      });
-      return response.data;
-    } catch (e) {
-      handleError(e);
-    }
-  };
-
   const put = async (url: string, data?: any) => {
     try {
       const response = await api.put(url, data);
@@ -136,7 +124,6 @@ export default function useAuth() {
     post,
     put,
     del,
-    postImage,
     error,
   };
 }

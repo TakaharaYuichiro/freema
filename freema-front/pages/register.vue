@@ -54,6 +54,7 @@ import { computed } from 'vue';
 import useAuth from '~/composables/useAuth';
 
 const router = useRouter();
+const isLoading = ref(false);   // ボタン連続クリック防止用フラグ
 
 interface FormValues {
   name: string;
@@ -63,12 +64,12 @@ interface FormValues {
 }
 
 const schema = yup.object({
-  name: yup.string().required('お名前は必須です'),
-  email: yup.string().email('有効なメールアドレスを入力してください').required('メールアドレスは必須です'),
-  password: yup.string().min(8, 'パスワードは8文字以上必要です').required('パスワードは必須です'),
+  name: yup.string().required('お名前を入力してください'),
+  email: yup.string().email('有効なメールアドレスを入力してください').required('メールアドレスを入力してください'),
+  password: yup.string().min(8, 'パスワードは8文字以上で入力してください').required('パスワードを入力してください'),
   confirm_password: yup
     .string()
-    .oneOf([yup.ref('password')], 'パスワードが一致しません')
+    .oneOf([yup.ref('password')], 'パスワードと一致しません')
     .required('パスワード確認は必須です'),
 });
 
@@ -84,10 +85,14 @@ const { value: confirm_password, errorMessage: errorsConfirmPassword, meta: meta
 // 会員登録処理(仮登録)
 const { register, error } = useAuth();
 const handleRegister = async () => {
+  if (isLoading.value) return
+  isLoading.value = true;
+
   const success = await register(name.value, email.value, password.value, confirm_password.value);
   if (success) {
     router.push('/verify-info'); // 「メール確認してください」画面へ
   }
+  isLoading.value = false;
 };
 </script>
 

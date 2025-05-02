@@ -3,19 +3,19 @@
     <table>
       <tbody>
         <tr class="row">
-        <th class="row__title">カテゴリー</th>
-        <td class="row__content category-list">
-          <template v-for="category in categories" :key="category.id">
-            <div class="category-list__item">{{ category.name }}</div>
-          </template>
-        </td>
-      </tr>
-      <tr class="row">
-        <th class="row__title">商品の状態</th>
-        <td class="row__content">
-          {{ conditionLabel }}
-        </td>
-      </tr>
+          <th class="row__title">カテゴリー</th>
+          <td class="row__content category-list">
+            <template v-for="category in categories" :key="category.id">
+              <div class="category-list__item">{{ category.name }}</div>
+            </template>
+          </td>
+        </tr>
+        <tr class="row">
+          <th class="row__title">商品の状態</th>
+          <td class="row__content">
+            {{ conditionLabel }}
+          </td>
+        </tr>
       </tbody>
     </table>
   </div>
@@ -31,13 +31,10 @@ const props = defineProps<{
 }>();
 const categories = computed(() => props.categories ?? []);
 
-type ProductConditionKey = 1 | 2 | 3 | 4;
 const condition_index = computed(() => props.condition_index);
-const selectedCondition: ProductConditionKey =
-  [1, 2, 3, 4].includes(condition_index.value)
-    ? (condition_index.value as ProductConditionKey)
-    : 1; // デフォルトに「良好」を指定
-const conditionLabel = computed(() => PRODUCT_CONDITIONS[selectedCondition])
+const conditionLabel = computed(() => {
+  return PRODUCT_CONDITIONS[condition_index.value];
+});
 </script>
 
 <style scoped>
@@ -71,5 +68,4 @@ const conditionLabel = computed(() => PRODUCT_CONDITIONS[selectedCondition])
   display: flex;
   align-items: center;
 }
-
 </style>

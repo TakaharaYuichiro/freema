@@ -25,7 +25,7 @@ class CategoryProductController extends Controller
   /**
    * Store a newly created resource in storage.
    *
-   * @param  \Illuminate\Http\TodoRequest  $request
+   * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\Response
    */
   public function store(Request $request)
@@ -45,7 +45,7 @@ class CategoryProductController extends Controller
   /**
    * Display the specified resource.
    *
-   * @param  \App\Models\Todo  $todo
+   * @param  \App\Models\CategoryProduct  $category_products
    * @return \Illuminate\Http\Response
    */
   // public function show($id)
@@ -65,8 +65,8 @@ class CategoryProductController extends Controller
   /**
    * Update the specified resource in storage.
    *
-   * @param  \Illuminate\Http\TodoRequest  $request
-   * @param  \App\Models\Todo  $todo
+   * @param  \Illuminate\Http\Request  $request
+   * @param  \App\Models\CategoryProduct  $category_products
    * @return \Illuminate\Http\Response
    */
   // public function update(Request $request, CategoryProduct $category_products)

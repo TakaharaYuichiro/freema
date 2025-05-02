@@ -6,33 +6,36 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Log;
-use App\Http\Requests\UserRequest;
 
 class UserController extends Controller
 {
-/**
+  /**
    * Display a listing of the resource.
    *
    * @return \Illuminate\Http\Response
    */
   public function index()
   {
-    $users = User::select('id', 'name', 'email', )->get();
-    return response()->json([
-      'data' => $users
-    ], 200);
-    
+    try {
+      $users = User::select('id', 'name', 'email',)->get();
+      return response()->json([
+        'data' => $users
+      ], 200);
+    } catch (Exception $err) {
+      return response()->json([
+        'error' => $err,
+      ], 400);
+    }
   }
 
   /**
    * Store a newly created resource in storage.
    *
-   * @param  \Illuminate\Http\UserRequest  $request
+   * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\Response
    */
   public function store(Request $request)
   {
-    Log::debug($request);
     try {
       $item = User::create($request->all());
       return response()->json([
@@ -68,34 +71,12 @@ class UserController extends Controller
   /**
    * Update the specified resource in storage.
    *
-   * @param  \Illuminate\Http\UserRequest  $request
+   * @param  \Illuminate\Http\Request  $request
    * @param  \App\Models\User  $user
    * @return \Illuminate\Http\Response
    */
-  // public function update(Request $request, $id)
-  // {
-  //   Log::debug($request->all());
-  //   try {
-  //     $item = User::find($id)->update($request);
-  //     if ($item) {
-  //       return response()->json([
-  //         'message' => 'Updated successfully',
-  //       ], 200);
-  //     } else {
-  //       return response()->json([
-  //         'error' => 'Not found',
-  //       ], 404);
-  //     }
-  //   } catch (Exception $err) {
-  //     return response()->json([
-  //       'error' => $err,
-  //     ], 400);
-  //   }
-  // }
   public function update(Request $request, $id)
   {
-    Log::debug('Update request:', $request->all());
-
     try {
       $user = User::find($id);
 
@@ -108,7 +89,6 @@ class UserController extends Controller
       return response()->json([
         'message' => 'Updated successfully',
       ], 200);
-
     } catch (Exception $err) {
       Log::error('Update failed:', ['message' => $err->getMessage()]);
       return response()->json([
@@ -121,7 +101,7 @@ class UserController extends Controller
   /**
    * Remove the specified resource from storage.
    *
-   * @param  \App\Models\Prodcut  $user
+   * @param  \App\Models\User  $user
    * @return \Illuminate\Http\Response
    */
   public function destroy(User $user)

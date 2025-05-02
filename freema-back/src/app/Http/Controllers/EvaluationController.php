@@ -4,14 +4,18 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Evaluation;
-use App\Models\User;
 use Exception;
-use Illuminate\Support\Facades\Log;
-
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class EvaluationController extends Controller
 {
- /**
+  use AuthorizesRequests;
+  public function __construct()
+  {
+    $this->middleware('auth:sanctum')->except(['index', 'show']);
+  }
+
+  /**
    * Display a listing of the resource.
    *
    * @return \Illuminate\Http\Response
@@ -24,7 +28,7 @@ class EvaluationController extends Controller
         'data' => $items
       ], 200);
     } else {
-      if ($request->query('product_id') ) {
+      if ($request->query('product_id')) {
         $items = Evaluation::with('user:id,name,img_filename')->where('product_id', $request->product_id)->get();
         return response()->json([
           'data' => $items
@@ -34,14 +38,13 @@ class EvaluationController extends Controller
           'error' => 'query error',
         ], 400);
       }
-
     }
   }
 
   /**
    * Store a newly created resource in storage.
    *
-   * @param  \Illuminate\Http\TodoRequest  $request
+   * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\Response
    */
   public function store(Request $request)
@@ -61,7 +64,6 @@ class EvaluationController extends Controller
   /**
    * Display the specified resource.
    *
-   * @param  \App\Models\Todo  $todo
    * @return \Illuminate\Http\Response
    */
   public function show($id)
@@ -81,8 +83,8 @@ class EvaluationController extends Controller
   /**
    * Update the specified resource in storage.
    *
-   * @param  \Illuminate\Http\TodoRequest  $request
-   * @param  \App\Models\Todo  $todo
+   * @param  \Illuminate\Http\Request  $request
+   * @param  \App\Models\Evaluation  $evaluation
    * @return \Illuminate\Http\Response
    */
   public function update(Request $request, Evaluation $evaluation)
@@ -112,7 +114,7 @@ class EvaluationController extends Controller
   /**
    * Remove the specified resource from storage.
    *
-   * @param  \App\Models\Todo  $todo
+   * @param  \App\Models\Evaluation  $evaluation
    * @return \Illuminate\Http\Response
    */
   public function destroy(Evaluation $evaluation)

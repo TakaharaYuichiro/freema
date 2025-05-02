@@ -12,10 +12,12 @@ export default defineNuxtConfig({
   css: [
     'normalize.css/normalize.css'
   ],
+  
   runtimeConfig: {
     public: {
+      backUrlBase: process.env.NUXT_PUBLIC_BACK_URL_BASE || 'http://localhost:8000/',
       imageUrlBase: process.env.NUXT_PUBLIC_IMAGE_URL_BASE || 'http://localhost:8000/storage',
-      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'
+      stripePublicKey: process.env.NUXT_PUBLIC_STRIPE_PUBLIC_KEY || '',
     }
-  }
+  },
 })

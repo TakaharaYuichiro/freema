@@ -22,16 +22,8 @@ class Category extends Model
     return $this->belongsTo(User::class);
   }
 
-  // public function products()
-  // {
-  //   return $this->belongsTo(Product::class);
-  // }
-  // public function products(): BelongsToMany
-  // {
-  //     return $this->belongsToMany(Product::class);
-  // }
   public function products()
   {
-      return $this->belongsToMany(Product::class, 'category_products', 'category_id', 'product_id');
+    return $this->belongsToMany(Product::class, 'category_products', 'category_id', 'product_id');
   }
 }

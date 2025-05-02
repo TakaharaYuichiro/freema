@@ -3,48 +3,53 @@
     <div v-if="products.length == 0">
       該当する商品はありません。
     </div>
-    <div class="item" v-for="product in products" :key="product.id">
-      <img class="image" :src="getProductImage(product.img_filename)" @error="onImageError" @click="showDetail(product.id)" />
-      <div class="content">
-        <div class="content__header">
-          <div class="content__header--name">{{ product.name }}</div>
-          <div class="content__header--price">{{ product.price.toLocaleString() }}</div>
-        </div>
-        <div class="content__description">{{ product.content }}</div>
-        <div class="content__button">
-          <button class="content__button--show-detail" type="button" @click="showDetail(product.id)">詳しく見る</button>
-          <div class="content__button--favorite__container">
-            <input type="hidden" name="shop_id" value="{{$shop['id']}}">
-            <button class="content__button--favorite" type="button" @click="toggleFavorite(product.id)">
-              <Icon name="ic:baseline-favorite" :style="{ color: product.is_favorite ? 'red' : 'lightgray' }" size="2em" />
-            </button>
-            <div class="content__button--favorite__counter">
-              {{ product.favorites_count }}
+    <template v-for="product in products" :key="product.id">
+      <div class="item">
+        <img class="image" :src="getProductImage(product.img_filename)" @error="onImageError"
+          @click="showDetail(product.id)" />
+        <div class="content">
+          <div class="content__header">
+            <div class="content__header--name">{{ product.name }}</div>
+            <div class="content__header--price">{{ product.price.toLocaleString() }}</div>
+          </div>
+          <div class="content__description">{{ product.content }}</div>
+          <div class="content__button">
+            <button class="content__button--show-detail" type="button" @click="showDetail(product.id)">詳しく見る</button>
+            <button v-if="product.user_id === auth.user.id" class="content__button--show-detail" type="button" @click="cancelListing(product.id)">出品取消</button>
+            <div class="content__button--favorite__container">
+              <button class="content__button--favorite" type="button" @click="toggleFavorite(product.id)">
+                <Icon name="ic:baseline-favorite" :style="{ color: product.is_favorite ? 'red' : 'lightgray' }"
+                  size="2em" />
+              </button>
+              <div class="content__button--favorite__counter">
+                {{ product.favorites_count }}
+              </div>
             </div>
           </div>
         </div>
+        <div class="sold" v-if="product.purchases_exists"></div>
       </div>
-      <div class="sold" v-if="product.purchases_exists">
-        <div class="sold__text">sold</div>
-      </div>
-    </div>
+    </template>
   </div>
 </template>
 
 <script setup lang="ts">
 import type { ProductExp } from '~/types/productExp';
+import { useAuthStore } from "@/stores/auth";
 
+const auth = useAuthStore();
 const router = useRouter();
+const { get, del } = useAuth();
 const props = defineProps<{
   products: ProductExp[] | null;
 }>();
 const products = computed(() => props.products ?? []);
+const isLoading = ref(false);   // ボタン連続クリック防止用フラグ
 
-const emit = defineEmits(['callParentMethod'])
+const emit = defineEmits(['toggleFavorite', 'refreshData'])
 
 const toggleFavorite = async (product_id: number) => {
-  console.log('click toggle');
-  emit('callParentMethod', product_id);
+  emit('toggleFavorite', product_id);
 }
 
 const showDetail = (product_id: number) => {
@@ -61,6 +66,47 @@ const onImageError = (event: Event) => {
   if (target.dataset.errorHandled) return // すでにnoimageに差し替え済みなら何もしない
   target.src = '/images/defaultImages/noimage.png'
   target.dataset.errorHandled = 'true'
+}
+
+const cancelListing = async (product_id: number) => {
+  if (isLoading.value) return
+  isLoading.value = true;
+
+  // 購入データ確認
+  try {
+    const resp = await get(`/products/${product_id}`);
+    if (resp.data.purchases_exists) {
+      alert('販売済みの商品の出品は取り消すことができません。');
+      isLoading.value = false;
+      return;
+    }
+  } catch (err) {
+    console.error('読み込み失敗', err);
+    isLoading.value = false;
+    return;
+  }
+
+  // 出品取り消し確認
+  const ret = window.confirm('この商品の出品を取り消してよろしいですか？');
+  if (!ret) {
+    isLoading.value = false;
+    return;
+  }
+
+  // 取り消し実行
+  try {
+    const resp = await del(`/products/${product_id}`);
+    if (resp.success) {
+      alert('出品を取り消しました。');
+      emit('refreshData');
+      isLoading.value = false;
+      return;
+    }
+  } catch (err) {
+    console.error('読み込み失敗', err);
+    isLoading.value = false;
+    return;
+  }
 }
 </script>
 
@@ -134,6 +180,7 @@ const onImageError = (event: Event) => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 2px;
 }
 
 .content__button--show-detail {
@@ -144,6 +191,7 @@ const onImageError = (event: Event) => {
   color: white;
   border: none;
   font-size: 0.7rem;
+  white-space: nowrap;
 }
 
 .content__button--show-detail:hover {
@@ -170,27 +218,36 @@ const onImageError = (event: Event) => {
 
 .sold {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  top: 0%;
+  left: 0%;
   pointer-events: none;
 }
 
-.sold__text {
-  font-size: 100px;
-  color: white;
-  opacity: 0.8;
-  font-weight: 800;
-  text-shadow:
-    4px 4px 1px #40505080,
-    -4px 4px 1px #40505080,
-    4px -4px 1px #40505080,
-    -4px -4px 1px #40505080,
-    4px 0px 1px #40505080,
-    0px 4px 1px #40505080,
-    -4px 0px 1px #40505080,
-    0px -4px 1px #40505080;
-  transform: rotate(-45deg);
-  pointer-events: none;
+.sold:before {
+  position: absolute;
+  content: "";
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 70px 70px 0 0;
+  border-color: #FF5050 transparent transparent transparent;
+}
+
+.sold:after {
+  position: absolute;
+  content: "sold";
+  transform: rotate(315deg);
+  display: block;
+  font-size: 20px;
+  font-weight: 700;
+  white-space: pre;
+  color: #fff;
+  top: 17px;
+  left: 1px;
+  text-align: center;
+  z-index: 2;
+  line-height: 1.2;
 }
 </style>

@@ -25,15 +25,13 @@
         <div class="group-title">お支払い方法</div>
         <div class="group-content">
           <div class="dropdown">
-            <select v-model="paymentOptionIndex" class="create-form__item__select">
+            <select v-model="selectedOption" class="create-form__item__select">
               <option disabled value="0">選択してください</option>
-              <option v-for="(text, index) in paymentOptionText" :value="index + 1">
-                {{ text }}
-              </option>
+              <option v-for="(label, key) in PAYMENT_OPTIONS" :key="key" :value="Number(key)">{{ label }}</option>
             </select>
           </div>
         </div>
-        <div class="error-massage">{{ isPaymentValid? '': "お支払い方法が選択されていません" }}</div>
+        <div class="error-massage">{{ isPaymentValid ? '' : "お支払い方法が選択されていません" }}</div>
       </div>
 
       <div class="group">
@@ -42,22 +40,34 @@
           <div class="change-destination-button-container">
             <button class="change-destination-button" @click="modalOpen = true">配送先を変更する</button>
           </div>
-          <PurchaseDestination 
-            v-model:modelValue="modalOpen"
-            :formData="formValues" 
-            @save="handleSave"
-          />
         </div>
         <div class="group-content">
-          <div>
-            <div>{{ formValues.zipcode }}</div>
-            <div>{{ formValues.address }}</div>
-            <div>{{ formValues.building }}</div>
-          </div>
+          <table class="send">
+            <tbody>
+              <tr class="send-row">
+                <th class="send-row__title">郵便番号</th>
+                <td class="send-row__contenn">{{ formValues.zipcode }}</td>
+              </tr>
+              <tr class="send-row">
+                <th class="send-row__title">住所</th>
+                <td class="send-row__contenn">{{ formValues.address }}</td>
+              </tr>
+              <tr class="send-row">
+                <th class="send-row__title">建物名</th>
+                <td class="send-row__contenn">{{ formValues.building }}</td>
+              </tr>
+              <tr class="send-row">
+                <th class="send-row__title">配送先氏名</th>
+                <td class="send-row__contenn">{{ formValues.to_name }} 様宛</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        <div class="error-massage">{{ isDestinationValid? '': "郵便番号と住所は必須です" }}</div>
+        <div class="error-massage">{{ isDestinationValid ? '' : "配送先が正しく設定されていません" }}</div>
       </div>
     </div>
+
+    <PurchaseDestinationModal v-model:modelValue="modalOpen" :formData="formValues" @save="handleSave" />
 
     <div class="right-section">
       <table class="summary-table">
@@ -74,15 +84,15 @@
           </tr>
           <tr>
             <th class="summary-table__header">お支払い方法</th>
-            <td class="summary-table__content">
-              {{ paymentOptionIndex == 0? '選択されていません': paymentOptionText[paymentOptionIndex-1] }}
-            </td>
+            <td class="summary-table__content">{{ selectedOptionsLabel }}</td>
           </tr>
         </tbody>
       </table>
       <div class="submit-button-container">
         <client-only>
-          <button class="button" :disabled="product.purchases_exists || !auth.user || !isPaymentValid || !isDestinationValid" @click="uploadData">購入する</button>
+          <button class="button"
+            :disabled="product.purchases_exists || !auth.user || !isPaymentValid || !isDestinationValid"
+            @click="uploadData">購入する</button>
         </client-only>
       </div>
     </div>
@@ -93,6 +103,7 @@
 import { ref } from 'vue'
 import type { Product } from '~/types/product';
 import type { Category } from '~/types/category';
+import { PAYMENT_OPTIONS } from '@/utils/constants'
 
 definePageMeta({ middleware: 'auth' });
 
@@ -100,32 +111,37 @@ const route = useRoute();
 const router = useRouter();
 const auth = useAuthStore();
 const { get, post } = useAuth();
+const isLoading = ref(false);   // ボタン連続クリック防止用フラグ
 
 const product_id = route.query.product_id;
 const modalOpen = ref(false)
 const formValues = ref({
   zipcode: '',
   address: '',
-  building: ''
+  building: '',
+  to_name: '',
+});
+
+const selectedOption = ref<number>(0)
+const selectedOptionsLabel = computed(() => {
+  return selectedOption.value == 0 ? '選択されていません' : PAYMENT_OPTIONS[selectedOption.value];
 });
 
 const handleSave = (newData: typeof formValues.value) => {
   formValues.value = newData;
 }
 
-const isPaymentValid = computed(() =>  paymentOptionIndex.value != 0);
-const isDestinationValid = computed(() => (formValues.value.zipcode != '' && formValues.value.address != ''));
+const isPaymentValid = computed(() => selectedOption.value != 0);
+const isDestinationValid = computed(() => (formValues.value.zipcode != '' && formValues.value.address != '' && formValues.value.to_name != ''));
 
 const setInitialValues = () => {
   if (auth.user) {
     formValues.value.zipcode = auth.user.zipcode || '';
     formValues.value.address = auth.user.address || '';
     formValues.value.building = auth.user.building || '';
+    formValues.value.to_name = auth.user.name || '';
   }
 }
-
-const paymentOptionIndex = ref(0);
-const paymentOptionText = ['コンビニ払い', 'カード支払い'];
 
 const imageUrlBase = useRuntimeConfig().public.imageUrlBase;
 const getProductImage = (filename: string) => {
@@ -186,44 +202,72 @@ const readProduct = async () => {
 };
 
 const uploadData = async () => {
+  if (isLoading.value) return
+  isLoading.value = true;
+
   // ユーザー存在チェック
   const respAuth = await get(`/users/${auth.user.id}`);
   if (respAuth.data.id != auth.user.id) {
     alert('ユーザー情報の取得に失敗しました');
+    isLoading.value = false;
     return;
   }
 
   // 自分の出品ではないかチェック
   if (auth.user.id == product.value.user_id) {
     alert('自分が出品した商品を購入することはできません');
+    isLoading.value = false;
     return;
   }
 
   // 入力内容チェック
   if (!isPaymentValid.value || !isDestinationValid.value) {
     alert('必要事項が入力されていません');
+    isLoading.value = false;
     return;
   }
 
   // 最終確認
   const ret = window.confirm('この商品を購入しますか？');
-  if (!ret) return;
+  if (!ret) {
+    isLoading.value = false;
+    return;
+  }
+
+
 
   // 購入データのアップロード
   try {
+    let paid_at = null;
+    if (product.value.price == 0) {
+      // 商品価格がゼロ円の時は現在時刻をpaid_atに入れる(購入完了にする)
+      const date = new Date();
+      date.setTime(date.getTime() - date.getTimezoneOffset() * 60 * 1000);
+      const str_date = date.toISOString().replace('T', ' ').substring(0, 19);
+      paid_at = str_date; // 2023-01-07 12:01:43
+    }
+
     const buffPurchase = {
       product_id: product_id,
       user_id: auth.user.id,
       zipcode: formValues.value.zipcode,
       address: formValues.value.address,
+      to_name: formValues.value.to_name,
       building: formValues.value.building,
-      method_index: paymentOptionIndex.value
+      method_index: selectedOption.value,
+      paid_at: paid_at,
     };
 
     const resp2 = await post(`/purchases`, buffPurchase);
     if (resp2) {
-      alert('購入しました!');
-      router.push(`/mypage?mode=1`);
+      const purchaseId = resp2.data.id;
+
+      await $fetch('/api/store_purchase', {
+        method: 'POST',
+        body: { purchaseId }
+      })
+
+      router.push('/purchase_accepted');
     } else {
       throw new Error("APIエラー");
     }
@@ -231,6 +275,7 @@ const uploadData = async () => {
   } catch (err) {
     console.error('アップロード失敗:', err)
     alert('データのアップロードに失敗しました。');
+    isLoading.value = false;
   }
 }
 
@@ -279,7 +324,7 @@ onMounted(async () => {
 
 .error-massage {
   margin: 10px 0 10px 50px;
-  color:red;
+  color: red;
 }
 
 .right-section {
@@ -304,7 +349,6 @@ onMounted(async () => {
   border: 1px solid gray;
   border-left: none;
 }
-
 
 .submit-button-container {
   margin: 50px 0 20px;
@@ -423,10 +467,16 @@ onMounted(async () => {
   margin: 4px 0;
 }
 
+.send-row__title {
+  font-weight: 600;
+  text-align: left;
+  width: 100px;
+  color: #666;
+}
+
 @media screen and (max-width: 768px) {
   .main-content {
     display: block;
-
   }
 }
 </style>

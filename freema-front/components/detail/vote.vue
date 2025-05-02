@@ -17,6 +17,8 @@
 
 <script setup lang="ts">
 import { defineExpose } from 'vue';
+import useAuth from '~/composables/useAuth';
+
 const { get, post, put, del } = useAuth();
 const props = defineProps<{
   product_id: number;
@@ -39,16 +41,16 @@ const countEvaluations = async () => {
     const resp = await get(`/evaluations?product_id=${props.product_id}`);
     evaluationCount.value = resp.data.length;
   } catch (err) {
-    console.log('読み込み失敗', err);
+    console.error('読み込み失敗', err);
   }
 };
 
 const countFavorites = async () => {
   try {
-    const resp = await get(`/countFavorites/${props.product_id}`);
+    const resp = await get(`/count_favorites/${props.product_id}`);
     favoriteCount.value = resp.data.count;
   } catch (err) {
-    console.log('読み込み失敗', err);
+    console.error('読み込み失敗', err);
   }
 };
 

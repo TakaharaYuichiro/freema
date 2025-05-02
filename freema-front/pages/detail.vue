@@ -19,8 +19,10 @@
       <DetailVote ref="voteRef" v-if="product.id !== 0" :product_id="product.id" />
 
       <div class="button-contaienr">
-        <button class="button" :disabled="!auth.user || product.purchases_exists" @click="handlePurchase">購入手続きへ</button>
+        <button class="button" :disabled="!auth.user || product.purchases_exists || myProduct"
+          @click="handlePurchase">購入手続きへ</button>
       </div>
+      <div class="remark" v-if="myProduct">自分が出品した商品は購入できません。</div>
 
       <div class="group">
         <div class="group-title">商品説明</div>
@@ -35,13 +37,8 @@
       </div>
 
       <div class="group">
-        <div class="group-title">出品者の情報</div>
-        <div>{{ userName }}さんが出品</div>
-      </div>
-
-      <div class="group">
         <div class="group-title">コメント</div>
-        <DetailComment v-if="product.id !== 0" :product_id="product.id" @updated="handleEvaluationUpdated"/>
+        <DetailComment v-if="product.id !== 0" :product_id="product.id" @updated="handleEvaluationUpdated" />
       </div>
     </div>
   </div>
@@ -57,8 +54,8 @@ const route = useRoute();
 const { get } = useAuth();
 const auth = useAuthStore();
 const product_id = route.query.product_id;
+const myProduct = ref(false);
 
-const userName = ref('');
 const voteRef = ref();
 const handleEvaluationUpdated = async () => {
   // 子コンポーネント1(/detail/comment)でコメント数が増減したことを子コンポーネント2(/detail/vote)に通知
@@ -115,8 +112,7 @@ const readProduct = async () => {
       purchases_exists: resp.data.purchases_exists,
     };
 
-    const respUser = await get(`/users/${product.value.user_id}`);
-    userName.value = respUser.data.name;
+    myProduct.value = product.value.user_id == auth.user?.id;
   } catch (err) {
     console.error('読み込み失敗', err);
   }
@@ -238,6 +234,14 @@ onMounted(async () => {
 
 .sold__content {
   margin: 4px 0;
+}
+
+.remark {
+  background: #f0f0f0;
+  padding: 20px 10px;
+  margin: 10px 0;
+  color: #333;
+  font-size: smaller;
 }
 
 @media screen and (max-width: 580px) {

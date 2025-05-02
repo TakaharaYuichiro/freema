@@ -5,12 +5,17 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use Exception;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Log;
-use App\Http\Requests\ProductRequest;
-
 
 class ProductController extends Controller
 {
+  use AuthorizesRequests;
+  public function __construct()
+  {
+    $this->middleware('auth:sanctum')->except(['index', 'show']);
+  }
+
   /**
    * Display a listing of the resource.
    *
@@ -19,22 +24,10 @@ class ProductController extends Controller
   public function index(Request $request)
   {
     try {
-      if ($request->has('except_user_id')) {
-        $items = Product::with('categories')->where('user_id', '!=', $request->except_user_id)->withCount('favorites')->withExists('purchases')->get();
-        return response()->json([
-          'data' => $items
-        ], 200);
-      } else if ($request->has('user_id')) {
-        $items = Product::with('categories')->where('user_id', $request->user_id)->withCount('favorites')->withExists('purchases')->get();
-          return response()->json([
-            'data' => $items
-          ], 200);
-      } else {
-        $items = Product::with('categories')->withCount('favorites')->withExists('purchases')->get();
-        return response()->json([
-          'data' => $items
-        ], 200);
-      }
+      $items = Product::with('categories')->withCount('favorites')->withExists('purchases')->get();
+      return response()->json([
+        'data' => $items
+      ], 200);
     } catch (Exception $err) {
       return response()->json([
         'error' => $err,
@@ -125,6 +118,7 @@ class ProductController extends Controller
       $item = Product::where('id', $product->id)->delete();
       if ($item) {
         return response()->json([
+          'success' => true,
           'message' => 'Deleted successfully',
         ], 200);
       } else {
@@ -138,36 +132,4 @@ class ProductController extends Controller
       ], 400);
     }
   }
-
-  public function getPurchasedProducts($user_id)
-  {
-    try {
-      $items = Product::whereIn('id', function ($query) use ($user_id) {
-        $query->select('product_id')
-          ->from('purchases')
-          ->where('user_id', $user_id);
-      })->withExists('purchases')->get();
-      return response()->json([
-        'data' => $items
-      ], 200);
-    } catch (Exception $err) {
-      return response()->json([
-        'error' => $err,
-      ], 400);
-    }
-  }
-
-  // public function getProductsExceptMine($user_id)
-  // {
-  //   try {
-  //     $items = Product::with('categories')->where('user_id', '!=', $user_id)->withExists('purchases')->get();
-  //     return response()->json([
-  //       'data' => $items
-  //     ], 200);
-  //   } catch (Exception $err) {
-  //     return response()->json([
-  //       'error' => $err,
-  //     ], 400);
-  //   }
-  // }
 }

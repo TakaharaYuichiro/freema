@@ -31,15 +31,6 @@ export default defineEventHandler(async (event) => {
     })
   })
 
-  // const uploadedFile = files.file as File | File[] | undefined
-
-  // if (!uploadedFile || Array.isArray(uploadedFile)) {
-  //   throw createError({
-  //     statusCode: 400,
-  //     statusMessage: '1ファイルのみアップロードしてください。',
-  //   })
-  // }
-
   const uploadedFileRaw = files.file
   let uploadedFile: File | undefined
 

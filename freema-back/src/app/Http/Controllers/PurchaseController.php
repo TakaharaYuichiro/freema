@@ -6,34 +6,26 @@ use Illuminate\Http\Request;
 use App\Models\Purchase;
 use Exception;
 use Illuminate\Support\Facades\Log;
-use App\Http\Requests\PurchaseRequest;
-
 
 class PurchaseController extends Controller
 {
- /**
+  /**
    * Display a listing of the resource.
    *
    * @return \Illuminate\Http\Response
    */
-  // public function index()
-  // {
-  //   $items = Purchase::with('categories')->get();
-  //   return response()->json([
-  //     'data' => $items
-  //   ], 200);
-    
-  // }
   public function index(Request $request)
   {
     if ($request->query() == null) {
-      $items = Purchase::with('categories')->get();
+      $items = Purchase::with('product')->get();
       return response()->json([
         'data' => $items
       ], 200);
-    } else {
-      if ($request->query('user_id') ) {
-        $items = Purchase::with('categories')->where('user_id', $request->user_id)->get();
+    } else if ($request->has('option')) {
+      $option = $request->option;
+      if ($option == 'mine') {
+        $user_id = $request->user()->id;
+        $items = Purchase::with('product')->where('user_id', $user_id)->get();
         return response()->json([
           'data' => $items
         ], 200);
@@ -48,12 +40,11 @@ class PurchaseController extends Controller
   /**
    * Store a newly created resource in storage.
    *
-   * @param  \Illuminate\Http\PurchaseRequest  $request
+   * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\Response
    */
   public function store(Request $request)
   {
-    Log::debug($request);
     try {
       $item = Purchase::create($request->all());
       return response()->json([
@@ -74,7 +65,9 @@ class PurchaseController extends Controller
    */
   public function show($id)
   {
-    $item = Purchase::with('categories')->find($id);
+    // Log::debug('PurchaseController');
+    // Log::debug($id);
+    $item = Purchase::with('product')->find($id);
     if ($item) {
       return response()->json([
         'data' => $item
@@ -89,7 +82,7 @@ class PurchaseController extends Controller
   /**
    * Update the specified resource in storage.
    *
-   * @param  \Illuminate\Http\PurchaseRequest  $request
+   * @param  \Illuminate\Http\Request  $request
    * @param  \App\Models\Purchase  $purchase
    * @return \Illuminate\Http\Response
    */
@@ -120,7 +113,7 @@ class PurchaseController extends Controller
   /**
    * Remove the specified resource from storage.
    *
-   * @param  \App\Models\Prodcut  $purchase
+   * @param  \App\Models\Purchase  $purchase
    * @return \Illuminate\Http\Response
    */
   public function destroy(Purchase $purchase)

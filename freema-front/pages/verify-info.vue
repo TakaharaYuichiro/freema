@@ -28,7 +28,8 @@
         </div>
       </template>
 
-      <button :class="['resend-button', isAutoSending ? 'resend-button__blue' : 'resend-button__red']" @click="resendEmail" :disabled="isLoading"> 
+      <button :class="['resend-button', isAutoSending ? 'resend-button__blue' : 'resend-button__red']"
+        @click="resendEmail" :disabled="isLoading">
         {{ isLoading ? '再送信中...' : '確認メールを再送する' }}
       </button>
 
@@ -40,11 +41,12 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import api from '@/utils/api'; 
+// import api from '@/utils/api';
+import { useApi } from '@/utils/api'
 
+const api = useApi();
 const route = useRoute();
 const no_auto_sending = route.query.no_auto_sending as string;
-
 const isLoading = ref(false);
 const message = ref('');
 const error = ref('');
@@ -56,7 +58,7 @@ const resendEmail = async () => {
   error.value = '';
 
   try {
-    const token = localStorage.getItem('auth_token'); 
+    const token = localStorage.getItem('auth_token');
     const res = await api.post('/email/resend', {}, {
       headers: {
         Authorization: `Bearer ${token}`
@@ -71,7 +73,6 @@ const resendEmail = async () => {
   }
 };
 </script>
-
 
 <style scoped>
 .main-container {
@@ -123,6 +124,4 @@ const resendEmail = async () => {
 .resend-button__blue:hover {
   background: rgb(201, 223, 240)
 }
-
 </style>
-

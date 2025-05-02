@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
@@ -25,9 +24,6 @@ class LoginController extends Controller
     }
 
     $token = $user->createToken('auth_token')->plainTextToken;
-    Log::debug('LoginController');
-    Log::debug($token);
-
     return response()->json([
       'access_token' => $token,
       'token_type' => 'Bearer',

@@ -16,14 +16,12 @@
         <div class="comment-header">
           <div class="comment-header__info">
             <div class="comment-header__icon__container">
-              <!-- <img class="comment-header__icon__img" :src="imageSrc(evaluation.user.img_filename)" alt="アイコン" /> -->
               <img class="comment-header__icon__img" :src="getProductImage(evaluation.user.img_filename)"
                 @error="onImageError" alt="アイコン" />
             </div>
             <div class="comment-header__text">{{ evaluation.user.name }}</div>
             <div class="comment-header__text">{{ parseDate(evaluation.created_at) }}</div>
           </div>
-
           <div class="comment-header__button-container" v-if="evaluation.user.id == auth.user?.id">
             <button class="comment-header__button" @click="deleteComment(evaluation.id)">削除</button>
           </div>
