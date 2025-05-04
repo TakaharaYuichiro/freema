@@ -176,8 +176,8 @@ const updateSearchPurchases = () => {
   const buffPurchases = purchases.value.filter(purchase => {
     const matchesKeywords = keywords.every(kw =>
       purchase.product.name.toLowerCase().includes(kw) ||
-      purchase.product.brand.toLowerCase().includes(kw) ||
-      purchase.product.content.toLowerCase().includes(kw)
+      purchase.product.brand?.toLowerCase().includes(kw) ||
+      purchase.product.content?.toLowerCase().includes(kw)
     )
     return matchesKeywords;
   })
