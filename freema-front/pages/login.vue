@@ -47,8 +47,8 @@ interface FormValues {
   password: string;
 }
 const schema = yup.object({
-  email: yup.string().email('有効なメールアドレスを入力してください').required('メールアドレスを入力してください'),
-  password: yup.string().min(8, 'パスワードは8文字以上で入力してください').required('パスワードを入力してください')
+  email: yup.string().required('メールアドレスを入力してください').email('有効なメールアドレスを入力してください'),
+  password: yup.string().required('パスワードを入力してください').min(8, 'パスワードは8文字以上で入力してください')
 });
 
 const { meta } = useForm<FormValues>({ validationSchema: schema });
