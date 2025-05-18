@@ -41,7 +41,6 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-// import api from '@/utils/api';
 import { useApi } from '@/utils/api'
 
 const api = useApi();

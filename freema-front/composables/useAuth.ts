@@ -53,7 +53,7 @@ export default function useAuth() {
         auth.login(token, null); // Pinia + localStorageに保存。まだ仮登録なのでユーザー情報(第2引数)はnullにしておく
         return -1;
       }
-      
+
       auth.login(token, user);
       return 1;
     } catch (e) {

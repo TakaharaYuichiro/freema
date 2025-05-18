@@ -64,7 +64,6 @@ const schema = yup.object({
   zipcode: yup
     .string()
     .required('郵便番号は必須です。')
-    // .matches(/^[0-9]{7}$|^[0-9]{3}-[0-9]{4}$/, '郵便番号の形式が正しくありません。'),
     .matches(/^\d{7}$|^\d{3}-\d{4}$/, {
       message: '郵便番号の形式が正しくありません(数値7桁 または 3桁-4桁)。',
       excludeEmptyString: true, // 空文字にはマッチをスキップ

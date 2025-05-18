@@ -4,7 +4,6 @@ import { useAuthStore } from '@/stores/auth';
 export const useApi = () => {
   const config = useRuntimeConfig();
   const backUrlBase = config.public.backUrlBase;
-  // const backUrlBase = "http://localhost:8000";
   const auth = useAuthStore();
 
   const api = axios.create({

@@ -24,9 +24,7 @@
           <template v-for="category in categories" :key="category.id">
             <button
               :class="['category-list__item', category.selected ? 'category-list__item__selected' : 'category-list__item__not-selected']"
-              @click="selectCategory(category.id)"
-              data-testid="category-button"
-            >{{ category.name }}
+              @click="selectCategory(category.id)" data-testid="category-button">{{ category.name }}
             </button>
           </template>
         </div>
@@ -75,7 +73,8 @@
 
     <div class="submit-button-container">
       <client-only>
-        <button class="submit-button" :disabled="!auth.user || !isFormValid" @click="submitData" data-testid="submit-button">出品する</button>
+        <button class="submit-button" :disabled="!auth.user || !isFormValid" @click="submitData"
+          data-testid="submit-button">出品する</button>
       </client-only>
     </div>
   </div>
@@ -91,7 +90,6 @@ import useAuth from '~/composables/useAuth';
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 
-// definePageMeta({ middleware: 'auth' });
 typeof definePageMeta === 'function' && definePageMeta({ middleware: 'auth' }); // テスト時には飛ばす
 
 type CategoryExp = Category & {

@@ -4,7 +4,7 @@
       <div class="header__inner">
         <div class="header__logo">
           <button class="logo-button" @click="handleGotoHome" title="ホーム画面へ">
-            <img class="logo" src="/images/defaultImages/logo.svg"  />
+            <img class="logo" src="/images/defaultImages/logo.svg" />
           </button>
         </div>
         <div class="header__search" v-if="showSearchBar">
@@ -121,9 +121,10 @@ body {
 }
 
 .logo-button {
-  border:none;
+  border: none;
   background: transparent;
 }
+
 .logo-button:hover {
   background: #aaa;
 }

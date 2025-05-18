@@ -3,10 +3,8 @@
     <div class="block">
       <div class="block__icon">
         <button class="content__button--favorite" data-testid="favorite-button" type="button" @click="toggleFavorite()">
-          <Icon class="icon" 
-            :name="`ic:${product.is_favorite ? 'round-star' : 'round-star-border'}`"
-            :style="{ color: product.is_favorite ? 'red' : '#666' }" 
-            data-testid="favorite-button-icon"/>
+          <Icon class="icon" :name="`ic:${product.is_favorite ? 'round-star' : 'round-star-border'}`"
+            :style="{ color: product.is_favorite ? 'red' : '#666' }" data-testid="favorite-button-icon" />
         </button>
       </div>
       <div class="block__count" data-testid="product-item--favorite-count">{{ favoriteCount }}</div>
@@ -30,7 +28,7 @@ const props = defineProps<{
   product: ProductExp;
 }>();
 
-const product = computed(()=>props.product);
+const product = computed(() => props.product);
 
 const emit = defineEmits(['toggleFavorite', 'refreshData'])
 
@@ -87,14 +85,10 @@ onMounted(async () => {
   display: block;
   justify-content: center;
   align-items: center;
-
-  /* border: 1px solid blue; */
 }
 
 .block__icon {
   align-items: center;
-
-    /* border: 1px solid red; */
 }
 
 .icon {

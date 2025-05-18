@@ -3,16 +3,19 @@
     <div class="sub-group">
       <div class="sub-title">投稿</div>
       <div class="input-comment__container">
-        <textarea class="input-comment" v-model="newComment" placeholder="コメントを入力してください" @blur="metaComment.touched = true" data-testid="input-comment"></textarea>
+        <textarea class="input-comment" v-model="newComment" placeholder="コメントを入力してください"
+          @blur="metaComment.touched = true" data-testid="input-comment"></textarea>
       </div>
       <div class="form__error" :hidden="!auth.user" data-testid="error-comment">{{ errorsComment }}</div>
       <div class="button-container">
-        <button class="button" :disabled="!auth.user || !isFormValid" @click="submitComment" data-testid="submit-comment">コメントを投稿する</button>
+        <button class="button" :disabled="!auth.user || !isFormValid" @click="submitComment"
+          data-testid="submit-comment">コメントを投稿する</button>
       </div>
     </div>
 
     <div class="sub-group">
-      <div class="sub-title">みんなのコメント(<span data-testid="product-item--evaluation-count2">{{ evaluations.length }}</span>)</div>
+      <div class="sub-title">みんなのコメント(<span data-testid="product-item--evaluation-count2">{{ evaluations.length
+      }}</span>)</div>
       <div class="comment-container" v-for="evaluation in evaluations" :key="evaluation.id">
         <div class="comment-header">
           <div class="comment-header__info">
@@ -201,7 +204,7 @@ onMounted(async () => {
   max-width: 800px;
   min-height: 150px;
   resize: vertical;
-  
+
 }
 
 .button-container {
@@ -251,7 +254,7 @@ onMounted(async () => {
   max-height: 100px;
   overflow-y: scroll;
   overflow-x: hidden;
-  overflow-wrap:break-word;
+  overflow-wrap: break-word;
 }
 
 .comment-header__icon__container {

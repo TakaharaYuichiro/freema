@@ -1,4 +1,5 @@
 <template>
+  <!-- app.vueをテストするためのラッパー -->
   <DefaultLayout>
     <PageComponent />
   </DefaultLayout>

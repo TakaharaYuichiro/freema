@@ -8,22 +8,19 @@
       <div class="form__group">
         <div class="form__group__title">メールアドレス</div>
         <input v-model="email" class="form__input" type="email" name="メールアドレス" placeholder="example@ex.com"
-          @blur="metaEmail.touched = true" data-testid="email"/>
+          @blur="metaEmail.touched = true" data-testid="email" />
         <div class="form__error" data-testid="error-email">{{ errorsEmail }}</div>
-        <!-- <div class="form__error" v-if="metaEmail.touched && errorsEmail">{{ errorsEmail }}</div> -->
       </div>
 
       <div class="form__group">
         <div class="form__group__title">パスワード</div>
         <input v-model="password" class="form__input" type="password" name="パスワード" placeholder="password"
-          @blur="metaPassword.touched = true" data-testid="password"/>
+          @blur="metaPassword.touched = true" data-testid="password" />
         <div class="form__error" data-testid="error-password">{{ errorsPassword }}</div>
-        <!-- <div class="form__error" v-if="metaPassword.touched && errorsPassword">{{ errorsPassword }}</div> -->
       </div>
 
       <div class="form__button">
-        <button class="form__button-submit" type="submit"  data-testid="submit">ログインする</button>
-        <!-- <button class="form__button-submit" type="submit" :disabled="!isFormValid">ログインする</button> -->
+        <button class="form__button-submit" type="submit" data-testid="submit">ログインする</button>
         <div class="form__error" data-testid="error-submit">{{ errorsSubmit }}</div>
       </div>
     </form>
@@ -57,8 +54,7 @@ const schema = yup.object({
   password: yup.string().required('パスワードを入力してください').min(8, 'パスワードは8文字以上で入力してください')
 });
 
-const { meta, validate } = useForm<FormValues>({ validationSchema: schema });
-const isFormValid = computed(() => meta.value.valid);
+const { validate } = useForm<FormValues>({ validationSchema: schema });
 
 const { value: email, errorMessage: errorsEmail, meta: metaEmail } = useField<string>('email');
 const { value: password, errorMessage: errorsPassword, meta: metaPassword } = useField<string>('password');

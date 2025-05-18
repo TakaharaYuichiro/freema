@@ -50,7 +50,7 @@ import useAuth from '~/composables/useAuth';
 import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import { useSearchStore } from '@/stores/search'
-import ProductPanel from '~/components/ProductPanel.vue';
+import ProductPanel from '~/components/productPanel.vue';
 import MypagePurchaseList from '~/components/mypage/purchaseList.vue';
 
 typeof definePageMeta === 'function' && definePageMeta({ middleware: 'auth' }); // テスト時には飛ばす
@@ -134,7 +134,6 @@ const readProducts = async () => {
       content: datum.content,
       img_filename: datum.img_filename,
       condition_index: datum.condition_index,
-      // status_index: datum.status_index,
       categories: datum.categories,
       is_favorite: false,
       favorites_count: datum.favorites_count,

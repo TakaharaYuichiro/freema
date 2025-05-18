@@ -74,8 +74,7 @@ const schema = yup.object({
     .required('パスワード確認は必須です'),
 });
 
-const { meta, validate } = useForm<FormValues>({ validationSchema: schema });
-const isFormValid = computed(() => meta.value.valid);
+const { validate } = useForm<FormValues>({ validationSchema: schema });
 
 // 各フィールドのバリデーション設定
 const { value: name, errorMessage: errorsName, meta: metaName } = useField<string>('name');
@@ -84,7 +83,7 @@ const { value: password, errorMessage: errorsPassword, meta: metaPassword } = us
 const { value: confirm_password, errorMessage: errorsConfirmPassword, meta: metaConfirmPassword } = useField<string>('confirm_password');
 
 // 会員登録処理(仮登録)
-const { register, error } = useAuth();
+const { register } = useAuth();
 
 const handleRegister = async () => {
   if (isLoading.value) return;
