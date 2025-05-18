@@ -8,39 +8,34 @@
       <div class="form__group">
         <div class="form__group__title">ユーザー名</div>
         <input v-model="name" class="form__input" type="text" name="お名前" placeholder="お名前"
-          @blur="metaName.touched = true" data-testid="name"/>
-        <div class="form__error"  data-testid="error-name">{{ errorsName }}</div>
-        <!-- <div class="form__error" v-if="metaName.touched && errorsName" data-testid="error-name">{{ errorsName }}</div> -->
+          @blur="metaName.touched = true" data-testid="name" />
+        <div class="form__error" data-testid="error-name">{{ errorsName }}</div>
       </div>
 
       <div class="form__group">
         <div class="form__group__title">メールアドレス</div>
         <input v-model="email" class="form__input" type="email" name="メールアドレス" placeholder="example@ex.com"
-          @blur="metaEmail.touched = true" data-testid="email"/>
+          @blur="metaEmail.touched = true" data-testid="email" />
         <div class="form__error" data-testid="error-email">{{ errorsEmail }}</div>
-        <!-- <div class="form__error" v-if="metaEmail.touched && errorsEmail">{{ errorsEmail }}</div> -->
       </div>
 
       <div class="form__group">
         <div class="form__group__title">パスワード</div>
         <input v-model="password" class="form__input" type="password" name="パスワード" placeholder="password"
-          @blur="metaPassword.touched = true" data-testid="password"/>
+          @blur="metaPassword.touched = true" data-testid="password" />
         <div class="form__error" data-testid="error-password">{{ errorsPassword }}</div>
-        <!-- <div class="form__error" v-if="metaPassword.touched && errorsPassword">{{ errorsPassword }}</div> -->
       </div>
 
       <div class="form__group">
         <div class="form__group__title">確認用パスワード</div>
         <input v-model="confirm_password" class="form__input" type="password" name="パスワード(確認用)" placeholder="password"
-          @blur="metaConfirmPassword.touched = true" data-testid="confirm_password"/>
+          @blur="metaConfirmPassword.touched = true" data-testid="confirm_password" />
         <div class="form__error" data-testid="error-confirm-password">{{ errorsConfirmPassword }}
-          <!-- <div class="form__error" v-if="metaConfirmPassword.touched && errorsConfirmPassword">{{ errorsConfirmPassword }} -->
         </div>
       </div>
 
       <div class="form__button">
         <button class="form__button-submit" type="submit" data-testid="submit">登録する</button>
-        <!-- <button class="form__button-submit" type="submit" :disabled="!isFormValid">登録する</button> -->
       </div>
     </form>
 
@@ -90,16 +85,7 @@ const { value: confirm_password, errorMessage: errorsConfirmPassword, meta: meta
 
 // 会員登録処理(仮登録)
 const { register, error } = useAuth();
-// const handleRegister = async () => {
-//   if (isLoading.value) return
-//   isLoading.value = true;
 
-//   const success = await register(name.value, email.value, password.value, confirm_password.value);
-//   if (success) {
-//     router.push('/verify-info'); // 「メール確認してください」画面へ
-//   }
-//   isLoading.value = false;
-// };
 const handleRegister = async () => {
   if (isLoading.value) return;
 
@@ -124,7 +110,6 @@ const handleRegister = async () => {
 
   isLoading.value = false;
 };
-
 </script>
 
 <style scoped>
