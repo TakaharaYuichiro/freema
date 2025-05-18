@@ -8,15 +8,15 @@
       <img class="img-section__img" :src="getProductImage(product.img_filename)" @error="onImageError" />
     </div>
     <div class="info-section">
-      <div class="info-section__name">{{ product.name }}</div>
-      <div class="info-section__brand">{{ product.brand }}</div>
-      <div class="info-section__price">
+      <div class="info-section__name" data-testid="product-item--name">{{ product.name }}</div>
+      <div class="info-section__brand" data-testid="product-item--brand">{{ product.brand }}</div>
+      <div class="info-section__price" data-testid="product-item--price">
         <span class="info-section__price__before">&yen;</span>
         <span class="info-section__price__value">{{ product.price.toLocaleString() }}</span>
         <span class="info-section__price__after">(税込)</span>
       </div>
 
-      <DetailVote ref="voteRef" v-if="product.id !== 0" :product_id="product.id" />
+      <DetailVote ref="voteRef" v-if="product.id !== 0" :product="product" @toggleFavorite="toggleFavorite" />
 
       <div class="button-contaienr">
         <button class="button" :disabled="!auth.user || product.purchases_exists || myProduct"
@@ -26,7 +26,7 @@
 
       <div class="group">
         <div class="group-title">商品説明</div>
-        <div>
+        <div data-testid="product-item--content">
           <span>{{ product.content }}</span>
         </div>
       </div>
@@ -37,7 +37,10 @@
       </div>
 
       <div class="group">
-        <div class="group-title">コメント</div>
+        <div class="group-title">
+          <span>コメント</span>
+          <Icon class="icon" name="mdi:chat-outline" size="1.3em" />
+        </div>
         <DetailComment v-if="product.id !== 0" :product_id="product.id" @updated="handleEvaluationUpdated" />
       </div>
     </div>
@@ -45,13 +48,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import type { Product } from '~/types/product';
-import { useRouter } from "vue-router";
+import { ref, onMounted } from 'vue';
+import type { ProductExp } from '~/types/productExp';
+import { useRouter, useRoute } from "vue-router";
+import useAuth from '~/composables/useAuth';
+import { useAuthStore } from "@/stores/auth";
+import DetailVote from '~/components/detail/vote.vue';
+import DetailInfo from '~/components/detail/info.vue';
+import DetailComment from '~/components/detail/comment.vue';
 
 const router = useRouter();
 const route = useRoute();
-const { get } = useAuth();
+const { get, post } = useAuth();
 const auth = useAuthStore();
 const product_id = route.query.product_id;
 const myProduct = ref(false);
@@ -78,7 +86,7 @@ const onImageError = (event: Event) => {
   target.dataset.errorHandled = 'true'
 }
 
-const product = ref<Product>({
+const product = ref<ProductExp>({
   id: 0,
   user_id: 0,
   name: '',
@@ -87,16 +95,16 @@ const product = ref<Product>({
   content: '',
   img_filename: '',
   condition_index: 0,
-  status_index: 0,
+  // status_index: 0,
   categories: [],
   favorites_count: 0,
   purchases_exists: false,
+  is_favorite: false,
 });
 
 const readProduct = async () => {
   try {
     const resp = await get(`/products/${product_id}`);
-
     product.value = {
       id: resp.data.id,
       user_id: resp.data.user_id,
@@ -106,11 +114,17 @@ const readProduct = async () => {
       content: resp.data.content,
       img_filename: resp.data.img_filename,
       condition_index: resp.data.condition_index,
-      status_index: resp.data.status_index,
+      // status_index: resp.data.status_index,
       categories: resp.data.categories,
       favorites_count: resp.data.favorites_count,
       purchases_exists: resp.data.purchases_exists,
+      is_favorite: false,
     };
+
+    if (auth.user) {
+      const resp2 = await get(`/get_favorites/${product_id}`);
+      product.value.is_favorite = resp2.is_favorite;
+    }
 
     myProduct.value = product.value.user_id == auth.user?.id;
   } catch (err) {
@@ -120,6 +134,31 @@ const readProduct = async () => {
 
 const handlePurchase = () => {
   router.push({ name: 'purchase', query: { product_id } });
+}
+
+const toggleFavorite = async (product_id: number) => {
+  if (!auth.user) {
+    alert('お気に入り登録にはログインが必要です。');
+    return
+  };
+
+  try {
+    // この商品のいいねをサーバーでチェックしオンならオフに、オフならオンにする。変更後のいいね状態をrespStateで受ける。
+    const respState = await post("/invert_favorite", {
+      'user_id': auth.user.id,
+      'product_id': product_id
+    })
+    product.value.is_favorite = respState.is_favorite;
+
+    // この商品につけられているいいねの数をカウントする
+    const respCount = await get(`/count_favorites/${product_id}`);
+    product.value.favorites_count = respCount.data.count;
+
+    await voteRef.value?.refreshData();
+
+  } catch (err) {
+    console.error('お気に入り書き込み失敗', err);
+  }
 }
 
 onMounted(async () => {
@@ -151,6 +190,7 @@ onMounted(async () => {
 .info-section {
   padding: 15px;
   width: 100%;
+  max-width: 500px;
   box-sizing: border-box;
 }
 
@@ -242,6 +282,12 @@ onMounted(async () => {
   margin: 10px 0;
   color: #333;
   font-size: smaller;
+}
+
+.icon {
+  margin-left: 15px;
+  color: #666;
+  vertical-align: bottom;
 }
 
 @media screen and (max-width: 580px) {

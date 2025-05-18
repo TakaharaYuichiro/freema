@@ -4,12 +4,12 @@
       該当する商品はありません。
     </div>
     <template v-for="product in products" :key="product.id">
-      <div class="item">
+      <div class="item" data-testid="product-item">
         <img class="image" :src="getProductImage(product.img_filename)" @error="onImageError"
           @click="showDetail(product.id)" />
         <div class="content">
           <div class="content__header">
-            <div class="content__header--name">{{ product.name }}</div>
+            <div class="content__header--name" data-testid="product-item--name">{{ product.name }}</div>
             <div class="content__header--price">{{ product.price.toLocaleString() }}</div>
           </div>
           <div class="content__description">{{ product.content }}</div>
@@ -18,8 +18,7 @@
             <button v-if="product.user_id === auth.user?.id" class="content__button--show-detail" type="button" @click="cancelListing(product.id)">出品取消</button>
             <div class="content__button--favorite__container">
               <button class="content__button--favorite" type="button" @click="toggleFavorite(product.id)">
-                <Icon name="ic:baseline-favorite" :style="{ color: product.is_favorite ? 'red' : 'lightgray' }"
-                  size="2em" />
+                <Icon name="ic:round-star" :style="{ color: product.is_favorite ? 'red' : 'lightgray' }" size="2em" />
               </button>
               <div class="content__button--favorite__counter">
                 {{ product.favorites_count }}
@@ -27,7 +26,7 @@
             </div>
           </div>
         </div>
-        <div class="sold" v-if="product.purchases_exists"></div>
+        <div class="sold" v-if="product.purchases_exists" data-testid="product-item--sold"></div>
       </div>
     </template>
   </div>
@@ -36,6 +35,9 @@
 <script setup lang="ts">
 import type { ProductExp } from '~/types/productExp';
 import { useAuthStore } from "@/stores/auth";
+import { useRouter } from 'vue-router'
+import useAuth from '~/composables/useAuth';
+import { ref, computed } from 'vue'
 
 const auth = useAuthStore();
 const router = useRouter();

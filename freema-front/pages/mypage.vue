@@ -5,7 +5,7 @@
         <div class="profile__image-container">
           <img class="profile__img" :src="imageSrc" alt="画像プレビュー" />
         </div>
-        <div class="prfile__name">{{ auth.user.name }}さん</div>
+        <div class="prfile__name"><span data-testid="user-name">{{ auth.user.name }}</span>さん</div>
       </div>
       <div class="profile-section__button-container">
         <button class="profile-section__edit-button" @click="handleProfile">プロフィール編集</button>
@@ -17,7 +17,7 @@
         <button class="switching-section__switch-button" :style="{ color: (mode === 0) ? 'red' : 'gray' }"
           @click="switchMode(0)">出品した商品</button>
         <button class="switching-section__switch-button" :style="{ color: (mode === 1) ? 'red' : 'gray' }"
-          @click="switchMode(1)">購入した商品<br>(支払完了)</button>
+          @click="switchMode(1)" data-testid="switching-button1">購入した商品<br>(支払完了)</button>
         <button class="switching-section__switch-button" :style="{ color: (mode === 2) ? 'red' : 'gray' }"
           @click="switchMode(2)">購入した商品<br>(支払確認待ち)</button>
       </div>
@@ -27,7 +27,7 @@
       <Transition :name="transitionName" mode="out-in">
         <div :key="mode">
           <div v-if="mode === 0">
-            <ProductPanel :products="products" @toggleFavorite="toggleFavorite" @refreshData="refreshData"/>
+            <ProductPanel :products="products" @toggleFavorite="toggleFavorite" @refreshData="refreshData" />
           </div>
           <div v-else-if="mode === 1">
             <MypagePurchaseList :purchases="completedPurchases" @refreshData="refreshData" />
@@ -42,16 +42,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed, onMounted } from 'vue'
 import type { Product } from '~/types/product';
 import type { ProductExp } from '~/types/productExp';
 import type { Purchase } from '~/types/purchase';
 import useAuth from '~/composables/useAuth';
+import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import { useSearchStore } from '@/stores/search'
-import { MypagePurchaseList } from '#components';
+import ProductPanel from '~/components/ProductPanel.vue';
+import MypagePurchaseList from '~/components/mypage/purchaseList.vue';
 
-definePageMeta({ middleware: 'auth' });
+typeof definePageMeta === 'function' && definePageMeta({ middleware: 'auth' }); // テスト時には飛ばす
 
 const auth = useAuthStore();
 const search = useSearchStore();
@@ -62,6 +64,7 @@ const transitionName = ref('slide-left');
 
 const previewUrl = ref<string | null>(null);
 const imageUrlBase = useRuntimeConfig().public.imageUrlBase;
+
 const imageSrc = computed(() => {
   if (previewUrl.value) {
     return previewUrl.value;
@@ -97,6 +100,7 @@ const completedPurchases = ref<Purchase[]>([]);
 const unfinishedPuchases = ref<Purchase[]>([]);
 const readPurchases = async () => {
   const resp = await get('/purchases?option=mine');
+
   purchases.value = resp.data.map((datum: Purchase) => ({
     id: datum.id,
     product_id: datum.product_id,
@@ -130,7 +134,7 @@ const readProducts = async () => {
       content: datum.content,
       img_filename: datum.img_filename,
       condition_index: datum.condition_index,
-      status_index: datum.status_index,
+      // status_index: datum.status_index,
       categories: datum.categories,
       is_favorite: false,
       favorites_count: datum.favorites_count,

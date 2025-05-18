@@ -8,7 +8,7 @@ export type Product = {
   content: string;
   img_filename: string;
   condition_index: number;
-  status_index: number;
+  // status_index: number;
   categories: Category[];
   favorites_count: number;
   purchases_exists: boolean;

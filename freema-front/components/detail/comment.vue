@@ -3,31 +3,32 @@
     <div class="sub-group">
       <div class="sub-title">投稿</div>
       <div class="input-comment__container">
-        <textarea class="input-comment" v-model="newComment" placeholder="コメントを入力してください"></textarea>
+        <textarea class="input-comment" v-model="newComment" placeholder="コメントを入力してください" @blur="metaComment.touched = true" data-testid="input-comment"></textarea>
       </div>
+      <div class="form__error" :hidden="!auth.user" data-testid="error-comment">{{ errorsComment }}</div>
       <div class="button-container">
-        <button class="button" :disabled="!auth.user" @click="submitComment">コメントを投稿する</button>
+        <button class="button" :disabled="!auth.user || !isFormValid" @click="submitComment" data-testid="submit-comment">コメントを投稿する</button>
       </div>
     </div>
 
     <div class="sub-group">
-      <div class="sub-title">みんなのコメント({{ evaluations.length }})</div>
+      <div class="sub-title">みんなのコメント(<span data-testid="product-item--evaluation-count2">{{ evaluations.length }}</span>)</div>
       <div class="comment-container" v-for="evaluation in evaluations" :key="evaluation.id">
         <div class="comment-header">
           <div class="comment-header__info">
             <div class="comment-header__icon__container">
-              <img class="comment-header__icon__img" :src="getProductImage(evaluation.user.img_filename)"
+              <img class="comment-header__icon__img" :src="getProductImage(evaluation.user?.img_filename)"
                 @error="onImageError" alt="アイコン" />
             </div>
-            <div class="comment-header__text">{{ evaluation.user.name }}</div>
+            <div class="comment-header__text">{{ evaluation.user?.name }}</div>
             <div class="comment-header__text">{{ parseDate(evaluation.created_at) }}</div>
           </div>
-          <div class="comment-header__button-container" v-if="evaluation.user.id == auth.user?.id">
+          <div class="comment-header__button-container" v-if="evaluation.user?.id == auth.user?.id">
             <button class="comment-header__button" @click="deleteComment(evaluation.id)">削除</button>
           </div>
         </div>
         <div class="comment-content">
-          <div>{{ evaluation.comment }}</div>
+          <div data-testid="product-item--evaluation-comment">{{ evaluation.comment }}</div>
         </div>
       </div>
     </div>
@@ -35,17 +36,33 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted, computed } from 'vue';
 import type { Evaluation } from '~/types/evaluation';
 import useAuth from '~/composables/useAuth';
+import { useAuthStore } from "@/stores/auth";
+import { useField, useForm } from 'vee-validate';
+import * as yup from 'yup';
 
-const { get, post, put, del } = useAuth();
+const { get, post, del } = useAuth();
 const auth = useAuthStore();
 const props = defineProps<{
   product_id: number;
 }>();
 const emit = defineEmits(['updated']);  // 兄弟コンポーネント(/detail/vote)のデータを更新するためのイベント
-const newComment = ref('');
 const evaluations = ref<Evaluation[]>([]);
+
+interface FormValues {
+  comment: string;
+}
+const schema = yup.object({
+  comment: yup.string().required('コメントを入力してください').max(255, 'コメントは255文字以内で入力してください')
+});
+
+const { meta } = useForm<FormValues>({ validationSchema: schema });
+const isFormValid = computed(() => meta.value.valid);
+
+const { value: newComment, errorMessage: errorsComment, meta: metaComment } = useField<string>('comment');
+
 const readEvaluations = async () => {
   try {
     const resp = await get(`/evaluations?product_id=${props.product_id}`);
@@ -79,7 +96,6 @@ const submitComment = async () => {
     const resp = await post('/evaluations', {
       user_id: auth.user.id,
       product_id: props.product_id,
-      score: 1,
       comment: newComment.value,
     });
     await readEvaluations();
@@ -185,6 +201,7 @@ onMounted(async () => {
   max-width: 800px;
   min-height: 150px;
   resize: vertical;
+  
 }
 
 .button-container {
@@ -233,6 +250,8 @@ onMounted(async () => {
   padding: 10px;
   max-height: 100px;
   overflow-y: scroll;
+  overflow-x: hidden;
+  overflow-wrap:break-word;
 }
 
 .comment-header__icon__container {
@@ -274,5 +293,12 @@ onMounted(async () => {
 
 .comment-header__button:hover {
   color: red;
+}
+
+.form__error {
+  color: #ff0000;
+  text-align: left;
+  font-size: 0.8rem;
+  margin-bottom: 10px;
 }
 </style>

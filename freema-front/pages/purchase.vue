@@ -25,7 +25,7 @@
         <div class="group-title">お支払い方法</div>
         <div class="group-content">
           <div class="dropdown">
-            <select v-model="selectedOption" class="create-form__item__select">
+            <select v-model="selectedOption" class="create-form__item__select" data-testid="payment-method-select">
               <option disabled value="0">選択してください</option>
               <option v-for="(label, key) in PAYMENT_OPTIONS" :key="key" :value="Number(key)">{{ label }}</option>
             </select>
@@ -46,19 +46,19 @@
             <tbody>
               <tr class="send-row">
                 <th class="send-row__title">郵便番号</th>
-                <td class="send-row__contenn">{{ formValues.zipcode }}</td>
+                <td class="send-row__content" data-testid="sendto-zipcode">{{ formValues.zipcode }}</td>
               </tr>
               <tr class="send-row">
                 <th class="send-row__title">住所</th>
-                <td class="send-row__contenn">{{ formValues.address }}</td>
+                <td class="send-row__content" data-testid="sendto-address">{{ formValues.address }}</td>
               </tr>
               <tr class="send-row">
                 <th class="send-row__title">建物名</th>
-                <td class="send-row__contenn">{{ formValues.building }}</td>
+                <td class="send-row__content" data-testid="sendto-building">{{ formValues.building }}</td>
               </tr>
               <tr class="send-row">
                 <th class="send-row__title">配送先氏名</th>
-                <td class="send-row__contenn">{{ formValues.to_name }} 様宛</td>
+                <td class="send-row__content"><span data-testid="sendto-name">{{ formValues.to_name }} </span>様宛</td>
               </tr>
             </tbody>
           </table>
@@ -84,7 +84,7 @@
           </tr>
           <tr>
             <th class="summary-table__header">お支払い方法</th>
-            <td class="summary-table__content">{{ selectedOptionsLabel }}</td>
+            <td class="summary-table__content" data-testid="selected-payment-method">{{ selectedOptionsLabel }}</td>
           </tr>
         </tbody>
       </table>
@@ -92,7 +92,7 @@
         <client-only>
           <button class="button"
             :disabled="product.purchases_exists || !auth.user || !isPaymentValid || !isDestinationValid"
-            @click="uploadData">購入する</button>
+            @click="uploadData" data-testid="purchase-button">購入する</button>
         </client-only>
       </div>
     </div>
@@ -100,12 +100,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, computed } from 'vue';
 import type { Product } from '~/types/product';
 import type { Category } from '~/types/category';
 import { PAYMENT_OPTIONS } from '@/utils/constants'
+import { useRouter, useRoute } from "vue-router";
+import useAuth from '~/composables/useAuth';
+import { useAuthStore } from "@/stores/auth";
+import PurchaseDestinationModal from '~/components/purchase/destinationModal.vue';
 
-definePageMeta({ middleware: 'auth' });
+typeof definePageMeta === 'function' && definePageMeta({ middleware: 'auth' }); // テスト時には飛ばす
 
 const route = useRoute();
 const router = useRouter();
@@ -131,8 +135,12 @@ const handleSave = (newData: typeof formValues.value) => {
   formValues.value = newData;
 }
 
-const isPaymentValid = computed(() => selectedOption.value != 0);
-const isDestinationValid = computed(() => (formValues.value.zipcode != '' && formValues.value.address != '' && formValues.value.to_name != ''));
+const isPaymentValid = computed(() => {
+  return selectedOption.value != 0
+});
+const isDestinationValid = computed(() => {
+  return (formValues.value.zipcode != '' && formValues.value.address != '' && formValues.value.to_name != '');
+});
 
 const setInitialValues = () => {
   if (auth.user) {
@@ -168,7 +176,7 @@ const product = ref<Product>({
   content: '',
   img_filename: '',
   condition_index: 0,
-  status_index: 0,
+  // status_index: 0,
   categories: [],
   favorites_count: 0,
   purchases_exists: false,
@@ -189,7 +197,7 @@ const readProduct = async () => {
       content: resp.data.content,
       img_filename: resp.data.img_filename,
       condition_index: resp.data.condition_index,
-      status_index: resp.data.status_index,
+      // status_index: resp.data.status_index,
       categories: resp.data.categories,
       favorites_count: resp.data.favorites_count,
       purchases_exists: resp.data.purchases_exists,
@@ -234,8 +242,6 @@ const uploadData = async () => {
     return;
   }
 
-
-
   // 購入データのアップロード
   try {
     let paid_at = null;
@@ -266,7 +272,6 @@ const uploadData = async () => {
         method: 'POST',
         body: { purchaseId }
       })
-
       router.push('/purchase_accepted');
     } else {
       throw new Error("APIエラー");
@@ -300,7 +305,6 @@ onMounted(async () => {
 
 .group {
   padding: 20px;
-
   border-bottom: 1px solid gray;
 }
 

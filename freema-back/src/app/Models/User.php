@@ -18,10 +18,10 @@ class User extends Authenticatable implements MustVerifyEmail
   use HasApiTokens, HasFactory, Notifiable;
   // use Billable;   // Stripe用
 
-  // 初期値を定義する
-  protected $attributes = [
-    'role' => 21,   // 一般ユーザー
-  ];
+  // // 初期値を定義する
+  // protected $attributes = [
+  //   'role' => 21,   // 一般ユーザー
+  // ];
 
   /**
    * The attributes that are mass assignable.
@@ -35,7 +35,7 @@ class User extends Authenticatable implements MustVerifyEmail
     'zipcode',
     'address',
     'building',
-    'role',
+    // 'role',
     'img_filename'
   ];
 

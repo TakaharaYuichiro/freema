@@ -24,7 +24,9 @@
           <template v-for="category in categories" :key="category.id">
             <button
               :class="['category-list__item', category.selected ? 'category-list__item__selected' : 'category-list__item__not-selected']"
-              @click="selectCategory(category.id)">{{ category.name }}
+              @click="selectCategory(category.id)"
+              data-testid="category-button"
+            >{{ category.name }}
             </button>
           </template>
         </div>
@@ -32,7 +34,7 @@
       <div class="sub-group sub-group__fixed-height">
         <div class="sub-group-title">商品の状態</div>
         <div class="dropdown">
-          <select v-model="conditionIndex" class="create-form__item__select">
+          <select v-model="conditionIndex" class="create-form__item__select" data-testid="condition-select">
             <option disabled value="0">選択してください</option>
             <option v-for="(label, key) in PRODUCT_CONDITIONS" :key="key" :value="Number(key)">{{ label }}</option>
           </select>
@@ -46,26 +48,26 @@
       <div class="sub-group sub-group__fixed-height">
         <div class="sub-group-title">商品名</div>
         <div class="input-text">
-          <input v-model="productName" type="text" @blur="metaProductName.touched = true">
+          <input v-model="productName" type="text" @blur="metaProductName.touched = true" data-testid="product-name">
           <div class="form__error" v-if="errorsProductName">{{ errorsProductName }}</div>
         </div>
       </div>
       <div class="sub-group sub-group__fixed-height">
         <div class="sub-group-title">ブランド名</div>
         <div class="input-text">
-          <input v-model="productBrand" type="text">
+          <input v-model="productBrand" type="text" data-testid="product-brand">
         </div>
       </div>
       <div class="sub-group">
         <div class="sub-group-title">商品の説明</div>
         <div class="input-text">
-          <textarea v-model="productContent" name="" id=""></textarea>
+          <textarea v-model="productContent" data-testid="product-description"></textarea>
         </div>
       </div>
       <div class="sub-group sub-group__fixed-height">
         <div class="sub-group-title">販売価格</div>
         <div class="input-text">
-          <input v-model="productPrice" type="text" @blur="metaProductPrice.touched = true">
+          <input v-model="productPrice" type="text" @blur="metaProductPrice.touched = true" data-testid="product-price">
           <div class="form__error" v-if="metaProductPrice.touched && errorsProductPrice">{{ errorsProductPrice }}</div>
         </div>
       </div>
@@ -73,20 +75,24 @@
 
     <div class="submit-button-container">
       <client-only>
-        <button class="submit-button" :disabled="!auth.user || !isFormValid" @click="submitData">出品する</button>
+        <button class="submit-button" :disabled="!auth.user || !isFormValid" @click="submitData" data-testid="submit-button">出品する</button>
       </client-only>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useField, useForm } from 'vee-validate';
 import * as yup from 'yup';
 import { PRODUCT_CONDITIONS } from '@/utils/constants'
 import type { Category } from '~/types/category';
+import useAuth from '~/composables/useAuth';
+import { useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/auth";
 
-definePageMeta({ middleware: 'auth' });
+// definePageMeta({ middleware: 'auth' });
+typeof definePageMeta === 'function' && definePageMeta({ middleware: 'auth' }); // テスト時には飛ばす
 
 type CategoryExp = Category & {
   selected: boolean
@@ -210,7 +216,7 @@ const submitData = async () => {
       content: productContent.value,
       img_filename: imgFilePath,
       condition_index: conditionIndex.value,
-      status_index: 1,
+      // status_index: 1,
     };
 
     const resp1 = await post('/products', buffProducts);

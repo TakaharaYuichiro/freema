@@ -17,7 +17,7 @@
                 <span>ようこそ、{{ auth.user.name }}さん</span>
               </div>
               <div class="header__user__button-container">
-                <button class="header__user__button" @click="handleLogout">ログアウト</button>
+                <button class="header__user__button" @click="handleLogout" data-testid="logout-button">ログアウト</button>
                 <button class="header__user__button" @click="handleMypage">マイページ</button>
                 <button class="header__user__button" @click="handleListing">出品</button>
               </div>
@@ -40,6 +40,9 @@
 
 <script setup lang="ts">
 import { useSearchStore } from '@/stores/search'
+import { useAuthStore } from "@/stores/auth";
+import { useRouter, useRoute } from 'vue-router'
+import { computed } from 'vue'
 
 const search = useSearchStore()
 const auth = useAuthStore();

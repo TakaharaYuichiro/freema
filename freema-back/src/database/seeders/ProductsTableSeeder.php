@@ -25,7 +25,6 @@ class ProductsTableSeeder extends Seeder
         'content' => 'スタイリッシュなデザインのメンズ腕時計',
         'img_filename' => 'defaultImages/Armani+Mens+Clock.jpg',
         'condition_index' => 1,
-        'status_index' => 1,
       ],
       [
         'user_id' => 2,
@@ -35,7 +34,6 @@ class ProductsTableSeeder extends Seeder
         'content' => '高速で信頼性の高いハードディスク',
         'img_filename' => 'defaultImages/HDD+Hard+Disk.jpg',
         'condition_index' => 2,
-        'status_index' => 1,
       ],
       [
         'user_id' => 1,
@@ -45,7 +43,6 @@ class ProductsTableSeeder extends Seeder
         'content' => '新鮮な玉ねぎ3束のセット',
         'img_filename' => 'defaultImages/iLoveIMG+d.jpg',
         'condition_index' => 3,
-        'status_index' => 1,
       ],
       [
         'user_id' => 1,
@@ -55,7 +52,6 @@ class ProductsTableSeeder extends Seeder
         'content' => 'クラシックなデザインの革靴',
         'img_filename' => 'defaultImages/Leather+Shoes+Product+Photo.jpg',
         'condition_index' => 4,
-        'status_index' => 1,
       ],
       [
         'user_id' => 1,
@@ -65,7 +61,6 @@ class ProductsTableSeeder extends Seeder
         'content' => '高性能なノートパソコン',
         'img_filename' => 'defaultImages/Living+Room+Laptop.jpg',
         'condition_index' => 1,
-        'status_index' => 1,
       ],
       [
         'user_id' => 1,
@@ -75,7 +70,6 @@ class ProductsTableSeeder extends Seeder
         'content' => '高音質のレコーディング用マイク',
         'img_filename' => 'defaultImages/Music+Mic+4632231.jpg',
         'condition_index' => 2,
-        'status_index' => 1,
       ],
       [
         'user_id' => 2,
@@ -85,7 +79,6 @@ class ProductsTableSeeder extends Seeder
         'content' => 'おしゃれなショルダーバッグ',
         'img_filename' => 'defaultImages/Purse+fashion+pocket.jpg',
         'condition_index' => 3,
-        'status_index' => 1,
       ],
       [
         'user_id' => 2,
@@ -95,7 +88,6 @@ class ProductsTableSeeder extends Seeder
         'content' => '使いやすいタンブラー',
         'img_filename' => 'defaultImages/Tumbler+souvenir.jpg',
         'condition_index' => 4,
-        'status_index' => 1,
       ],
       [
         'user_id' => 2,
@@ -105,7 +97,6 @@ class ProductsTableSeeder extends Seeder
         'content' => '手動のコーヒーミル',
         'img_filename' => 'defaultImages/Waitress+with+Coffee+Grinder.jpg',
         'condition_index' => 1,
-        'status_index' => 1,
       ],
       [
         'user_id' => 2,
@@ -115,18 +106,11 @@ class ProductsTableSeeder extends Seeder
         'content' => '便利なメイクアップセット',
         'img_filename' => 'defaultImages/Makeup_set.jpg',
         'condition_index' => 2,
-        'status_index' => 1,
       ],
     ];
 
     $data = [];
     foreach ($params as $param) {
-      // $exists = (
-      //     Product::where('user_id', $param['user_id'])
-      //         -> where('name', $param['name'])
-      //         -> exists()
-      // );
-
       $exists = (
         Product::where('name', $param['name'])
         ->exists()

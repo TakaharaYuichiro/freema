@@ -20,14 +20,12 @@ class EvaluationsTableSeeder extends Seeder
       [
         'user_id' => 1,
         'product_id' => 1,
-        'score' => 5,
-        'comment' => 'テストコメント',
+        'comment' => 'テストコメント1',
       ],
       [
         'user_id' => 2,
         'product_id' => 2,
-        'score' => 5,
-        'comment' => 'テストコメント',
+        'comment' => 'テストコメント2',
       ],
     ];
 

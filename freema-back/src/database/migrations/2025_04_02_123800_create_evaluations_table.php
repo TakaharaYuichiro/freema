@@ -15,11 +15,8 @@ class CreateEvaluationsTable extends Migration
   {
     Schema::create('evaluations', function (Blueprint $table) {
       $table->id();
-      // $table->foreignId('user_id')->constrained()->cascadeOnDelete();
       $table->foreignId('user_id')->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
-      // $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
       $table->foreignId('product_id')->constrained()->cascadeOnDelete();
-      $table->tinyInteger('score');
       $table->text('comment')->nullable();
       $table->timestamps();
     });

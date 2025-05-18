@@ -45,6 +45,7 @@ Route::apiResource('/evaluations', EvaluationController::class);  // auth:sanctu
 Route::post('category_products', [CategoryProductController::class, 'store']);
 Route::delete('category_products', [CategoryProductController::class, 'destroy']);
 Route::get('/get_favorites', [FavoriteController::class, 'getFavorites'])->middleware('auth:sanctum');
+Route::get('/get_favorites/{product_id}', [FavoriteController::class, 'showFavorites'])->middleware('auth:sanctum');
 Route::get('/count_favorites/{product_id}', [FavoriteController::class, 'countFavorites']);
 Route::post('/invert_favorite', [FavoriteController::class, 'invertFavorite']);
 Route::post('/upload_image', [ImageUploadController::class, 'upload'])->middleware('auth:sanctum');

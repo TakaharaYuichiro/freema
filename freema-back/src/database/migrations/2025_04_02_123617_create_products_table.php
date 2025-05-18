@@ -22,7 +22,6 @@ class CreateProductsTable extends Migration
       $table->text('content')->nullable();
       $table->string('img_filename')->nullable();
       $table->tinyInteger('condition_index');
-      $table->tinyInteger('status_index');
       $table->timestamps();
     });
   }

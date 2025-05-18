@@ -23,6 +23,21 @@ class FavoriteController extends Controller
     }
   }
 
+  public function showFavorites(Request $request)
+  {
+    try {
+      $user_id = $request->user()->id;
+      $isFavorite = Favorite::where('user_id', $user_id)->where('product_id', $request->product_id)->exists();
+      return response()->json([
+        'is_favorite' => $isFavorite == 1
+      ], 200);
+    } catch (Exception $err) {
+      return response()->json([
+        'error' => $err,
+      ], 400);
+    }
+  }
+
   public function invertFavorite(Request $request)
   {
     $target = Favorite::where('user_id', $request->user_id)->where('product_id', $request->product_id)->first();

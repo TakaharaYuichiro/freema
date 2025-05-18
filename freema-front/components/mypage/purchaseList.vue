@@ -4,7 +4,7 @@
       該当する商品はありません。
     </div>
     <template v-for="purchase in purchases" :key="purchase.id">
-      <div class="item">
+      <div class="item" data-testid="purchase-item">
         <img class="image" :src="getProductImage(purchase.product.img_filename)" @error="onImageError"
           @click="showDetail(purchase.product.id)" />
         <div class="content">
@@ -26,11 +26,11 @@
           <div class="group">
             <div>購入日： {{ formatDate(purchase.created_at) }}</div>
             <div>支払方法： {{ getPaymentMethodText(purchase.method_index) }}</div>
-            <div>送付先： {{ getSendtoText(purchase) }}</div>
+            <div>送付先： <span data-testid="sendto-text">{{ getSendtoText(purchase) }}</span></div>
           </div>
 
           <div class="group">
-            <div class="content__product--name">{{ purchase.product.name }}</div>
+            <div class="content__product--name" data-testid="purchased-product-name">{{ purchase.product.name }}</div>
             <div class="content__product--price">{{ purchase.product.price.toLocaleString() }}</div>
             <button class="content__button" type="button" @click="showDetail(purchase.product.id)">商品詳細</button>
           </div>
@@ -41,12 +41,20 @@
 </template>
 
 <script setup lang="ts">
-import type { Purchase } from '~/types/purchase';
+import { computed } from 'vue'
 import useAuth from '~/composables/useAuth';
-import dayjs from 'dayjs'
+import { useRouter } from "vue-router";
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 import { PAYMENT_OPTIONS } from '@/utils/constants'
+import type { Purchase } from '~/types/purchase';
 
-const { get, post, put, del } = useAuth();
+// dayjsのプラグインを設定 (.tz()を使えるようにする)
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
+const { del } = useAuth();
 const router = useRouter();
 const props = defineProps<{
   purchases: Purchase[] | null;

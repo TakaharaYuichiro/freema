@@ -17,28 +17,32 @@
     <div class="sub-group">
       <div class="sub-group-title">ユーザー名(必須)</div>
       <div class="input-text">
-        <input v-model="name" type="text" placeholder="ユーザー名" @blur="metaName.touched = true">
+        <input v-model="name" type="text" placeholder="ユーザー名" @blur="metaName.touched = true"
+          data-testid="profile-name">
         <div class="form__error">{{ errorsName }}</div>
       </div>
     </div>
     <div class="sub-group">
       <div class="sub-group-title">郵便番号</div>
       <div class="input-text">
-        <input v-model="zipcode" type="text" placeholder="123-4567" @blur="metaZipcode.touched = true">
+        <input v-model="zipcode" type="text" placeholder="123-4567" @blur="metaZipcode.touched = true"
+          data-testid="profile-zipcode">
         <div class="form__error" v-if="metaZipcode.touched && errorsZipcode">{{ errorsZipcode }}</div>
       </div>
     </div>
     <div class="sub-group">
       <div class="sub-group-title">住所</div>
       <div class="input-text">
-        <input v-model="address" type="text" placeholder="住所" @blur="metaAddress.touched = true">
+        <input v-model="address" type="text" placeholder="住所" @blur="metaAddress.touched = true"
+          data-testid="profile-address">
         <div class="form__error" v-if="metaAddress.touched && errorsAddress">{{ errorsAddress }}</div>
       </div>
     </div>
     <div class="sub-group">
       <div class="sub-group-title">建物名</div>
       <div class="input-text">
-        <input v-model="building" type="text" placeholder="建物名" @blur="metaBuilding.touched = true">
+        <input v-model="building" type="text" placeholder="建物名" @blur="metaBuilding.touched = true"
+          data-testid="profile-building">
         <div class="form__error" v-if="metaBuilding.touched && errorsBuilding">{{ errorsBuilding }}</div>
       </div>
     </div>
@@ -49,18 +53,22 @@
 
     <div class="button-group">
       <client-only>
-        <button class="button" :disabled="!auth.user || !isFormValid" @click="uploadData">更新する</button>
+        <button class="button" :disabled="!auth.user || !isFormValid" @click="uploadData"
+          data-testid="update-button">更新する</button>
       </client-only>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { useRouter } from "vue-router";
+import useAuth from '~/composables/useAuth';
+import { useAuthStore } from "@/stores/auth";
 import { useField, useForm } from 'vee-validate';
 import * as yup from 'yup';
 
-definePageMeta({ middleware: 'auth' });
+typeof definePageMeta === 'function' && definePageMeta({ middleware: 'auth' }); // テスト時には飛ばす
 
 interface FormValues {
   name: string;

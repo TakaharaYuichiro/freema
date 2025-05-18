@@ -19,7 +19,7 @@ class Product extends Model
     'content',
     'img_filename',
     'condition_index',
-    'status_index',
+    // 'status_index',
 
   ];
 

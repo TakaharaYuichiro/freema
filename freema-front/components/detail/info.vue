@@ -6,13 +6,13 @@
           <th class="row__title">カテゴリー</th>
           <td class="row__content category-list">
             <template v-for="category in categories" :key="category.id">
-              <div class="category-list__item">{{ category.name }}</div>
+              <div class="category-list__item" data-testid="product-item--category-name">{{ category.name }}</div>
             </template>
           </td>
         </tr>
         <tr class="row">
           <th class="row__title">商品の状態</th>
-          <td class="row__content">
+          <td class="row__content" data-testid="product-item--condition-text">
             {{ conditionLabel }}
           </td>
         </tr>
@@ -22,6 +22,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import type { Category } from '~/types/category';
 import { PRODUCT_CONDITIONS } from '@/utils/constants'
 

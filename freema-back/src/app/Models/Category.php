@@ -11,10 +11,7 @@ class Category extends Model
   use HasFactory;
 
   protected $fillable = [
-    'user_id',
-    'product_id',
-    'score',
-    'comment',
+    'name'
   ];
 
   public function users()

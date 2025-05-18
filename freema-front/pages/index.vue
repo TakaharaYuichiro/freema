@@ -4,9 +4,9 @@
       <div class="switching__button-container">
         <client-only>
           <button class="switching-button" :style="{ color: (mode === 0) ? 'red' : 'gray' }"
-            @click="switchMode(0)">おすすめ</button>
-          <button class="switching-button" :disabled="!auth.user" :style="{ color: (mode === 1) ? 'red' : 'gray' }"
-            @click="switchMode(1)">マイリスト</button>
+            @click="switchMode(0)" data-testid="switching-button0">おすすめ</button>
+          <button class="switching-button" :style="{ color: (mode === 1) ? 'red' : 'gray' }"
+            @click="switchMode(1)" data-testid="switching-button1">マイリスト</button>
         </client-only>
       </div>
     </div>
@@ -15,10 +15,10 @@
       <Transition :name="transitionName" mode="out-in">
         <div :key="mode">
           <div v-if="mode === 0">
-            <ProductPanel :products="products" @toggleFavorite="toggleFavorite" />
+            <ProductPanel :products="products" @toggleFavorite="toggleFavorite" data-testid="product-panel"/>
           </div>
           <div v-else>
-            <ProductPanel :products="favoriteProducts" @toggleFavorite="toggleFavorite" />
+            <ProductPanel :products="favoriteProducts" @toggleFavorite="toggleFavorite" data-testid="product-panel"/>
           </div>
         </div>
       </Transition>
@@ -27,12 +27,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted, computed } from 'vue'
 import { useAuthStore } from "@/stores/auth";
 import { useSearchStore } from '@/stores/search'
 import useAuth from '~/composables/useAuth';
 import type { Product } from '~/types/product';
 import type { ProductExp } from '~/types/productExp';
+import ProductPanel from '~/components/ProductPanel.vue';
 
 const search = useSearchStore()
 const auth = useAuthStore();
@@ -66,7 +67,7 @@ const readProducts = async () => {
       content: datum.content,
       img_filename: datum.img_filename,
       condition_index: datum.condition_index,
-      status_index: datum.status_index,
+      // status_index: datum.status_index,
       categories: datum.categories,
       is_favorite: false,
       favorites_count: datum.favorites_count,
@@ -138,6 +139,11 @@ const toggleFavorite = async (product_id: number) => {
     console.error('お気に入り書き込み失敗', err);
   }
 }
+
+const displayedProducts = computed(() => {
+  const ret = mode.value === 0 ? products.value : favoriteProducts.value;
+  return ret;
+})
 
 onMounted(async () => {
   auth.loadFromStorage();
