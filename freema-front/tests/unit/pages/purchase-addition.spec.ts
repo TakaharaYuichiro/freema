@@ -43,7 +43,7 @@ vi.mock('~/composables/useAuth', () => ({
       if (url === '/products') {
         return Promise.resolve({ data: clonedProducts })
       }
-      if (url === '/get_favorites') {
+      if (url === '/get-favorites') {
         return Promise.resolve({ data: mockFavorites })
       }
       if (url === `/products/${targetProductId}`) {

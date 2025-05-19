@@ -190,7 +190,7 @@ const submitData = async () => {
     formData.append('image', selectedFile.value)
 
     try {
-      const response = await post('/upload_image', formData);
+      const response = await post('/upload-image', formData);
       imgFilePath = response.path;
 
       // アップロード後にプレビュー URL を解除する（メモリ開放）
@@ -223,7 +223,7 @@ const submitData = async () => {
     for (let category of categories.value) {
       if (category.selected) {
         const category_product = { product_id: product_id, category_id: category.id };
-        await post('/category_products', category_product);
+        await post('/category-products', category_product);
       }
     }
     alert('出品しました!');

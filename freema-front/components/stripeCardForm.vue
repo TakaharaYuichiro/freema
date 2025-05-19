@@ -33,7 +33,7 @@ const props = defineProps<{
   totalPrice: number
 }>()
 
-const { get, post } = useAuth();
+const { post } = useAuth();
 const router = useRouter();
 
 const error = ref('')
@@ -73,23 +73,23 @@ const handleSubmit = async () => {
   }
 
   try {
-    const resp = await post('payment', {
+    const resp = await post('/card-payment', {
       stripeToken: result.token.id,
       purchase_id: props.purchaseId,
       total_price: props.totalPrice
     })
 
     if (resp.success) {
-      alert('支払い完了しました！');
-      router.push('/mypage?mode=2');
+      router.push('/mypage?mode=1');
+      return;
     } else {
       throw new Error(resp.error);
     }
   } catch (err) {
-    const msg = '決済に失敗しました。\n' + err;
+    const msg = '決済に失敗しました。';
     alert(msg);
-    router.push('/mypage?mode=1');
   }
+  router.push('/mypage?mode=2');
 }
 </script>
 

@@ -69,10 +69,13 @@ const readPurchase = async () => {
 
 const konbiniPayment = async () => {
   try {
+    console.log('konbiniPayment1: ', purchaseId.value, price.value);
     const res = await post('/konbini-payment', {
       purchase_id: purchaseId.value,
       total_price: price.value,
     })
+
+    console.log('konbiniPayment2: ', res);
 
     if (res.payment_info) {
       paymentInfo.value = res.payment_info;

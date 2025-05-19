@@ -42,15 +42,16 @@ Route::apiResource('/products', ProductController::class); // auth:sanctumのmid
 Route::apiResource('/categories', CategoryController::class); // auth:sanctumのmiddlewareは、Controller側で制御
 Route::apiResource('/evaluations', EvaluationController::class);  // auth:sanctumのmiddlewareは、Controller側で制御
 
-Route::post('category_products', [CategoryProductController::class, 'store']);
-Route::delete('category_products', [CategoryProductController::class, 'destroy']);
-Route::get('/get_favorites', [FavoriteController::class, 'getFavorites'])->middleware('auth:sanctum');
-Route::get('/get_favorites/{product_id}', [FavoriteController::class, 'showFavorites'])->middleware('auth:sanctum');
-Route::get('/count_favorites/{product_id}', [FavoriteController::class, 'countFavorites']);
-Route::post('/invert_favorite', [FavoriteController::class, 'invertFavorite']);
-Route::post('/upload_image', [ImageUploadController::class, 'upload'])->middleware('auth:sanctum');
+Route::post('/category-products', [CategoryProductController::class, 'store']);
 
-Route::post('/payment', [PaymentController::class, 'payment'])->middleware('auth:sanctum');
+Route::get('/get-favorites', [FavoriteController::class, 'getFavorites'])->middleware('auth:sanctum');
+Route::get('/get-favorites/{product_id}', [FavoriteController::class, 'showFavorites'])->middleware('auth:sanctum');
+Route::get('/count-favorites/{product_id}', [FavoriteController::class, 'countFavorites']);
+Route::post('/invert-favorite', [FavoriteController::class, 'invertFavorite']);
+
+Route::post('/upload-image', [ImageUploadController::class, 'upload'])->middleware('auth:sanctum');
+
+Route::post('/card-payment', [PaymentController::class, 'payment'])->middleware('auth:sanctum');
 Route::post('/konbini-payment', [PaymentController::class, 'konbiniPayment'])->middleware('auth:sanctum');
 Route::post('/konbini-payment/complete', [PaymentController::class, 'konbiniPaymentComplete'])->middleware('auth:sanctum');
 

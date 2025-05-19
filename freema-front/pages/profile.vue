@@ -166,7 +166,7 @@ const uploadData = async () => {
     formData.append('image', selectedFile.value)
 
     try {
-      const response = await post('/upload_image', formData);
+      const response = await post('/upload-image', formData);
       imgFileName = response.path;
 
       // アップロード後にプレビュー URL を解除する（メモリ開放）

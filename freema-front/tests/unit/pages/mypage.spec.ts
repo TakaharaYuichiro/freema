@@ -35,7 +35,7 @@ vi.mock('~/composables/useAuth', () => ({
   default: () => ({
     get: vi.fn().mockImplementation((url: string) => {
       if (url === '/products')  return Promise.resolve({ data: clonedProducts });
-      if (url === '/get_favorites') return Promise.resolve({ data: mockFavorites });
+      if (url === '/get-favorites') return Promise.resolve({ data: mockFavorites });
       if (url === '/purchases?option=mine') {
         const purchases = mockPurchases.filter(item => item.user_id === targetUserId);
         return Promise.resolve({ data: purchases })

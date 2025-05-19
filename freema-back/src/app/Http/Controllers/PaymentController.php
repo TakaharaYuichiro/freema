@@ -42,7 +42,7 @@ class PaymentController extends Controller
         'message' => '決済に失敗しました'
       ], 400);
     } catch (InvalidRequestException $e) {
-      Log::debug('InvalidRequestException');
+      Log::debug('InvalidRequestException '. $e->getMessage());
       return response()->json([
         'error' => $e->getMessage(),
         'message' => '決済に失敗しました'
@@ -59,6 +59,12 @@ class PaymentController extends Controller
   // Stripeコンビニ払いのAPI用メソッド
   public function konbiniPayment(Request $request)
   {
+    if ($request->total_price < 120) {
+      return response()->json([
+          'error' => 'コンビニ払いは120円以上から利用可能です。',
+      ], 400);
+    }
+
     Stripe::setApiKey(config('stripe.stripe_secret_key'));
     try {
       $paymentIntent = PaymentIntent::create([
@@ -72,7 +78,7 @@ class PaymentController extends Controller
           ],
         ],
         'confirmation_method' => 'automatic',
-        'confirm' => true,   // ★←これが重要
+        'confirm' => true,   
         'payment_method_data' => [
           'type' => 'konbini',
           'billing_details' => [
@@ -131,13 +137,6 @@ class PaymentController extends Controller
           return response()->json([
             'success' => true,
           ], 200);
-
-          // return response()->json([
-          //     'status' => $paymentIntent->status,
-          //     'amount' => $paymentIntent->amount,
-          //     'payment_method' => $paymentIntent->payment_method,
-          //     'charges' => $paymentIntent->charges->data,
-          // ]);
         }
       }
     } catch (\Exception $e) {

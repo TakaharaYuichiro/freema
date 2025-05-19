@@ -75,7 +75,7 @@ const readProducts = async () => {
 
     if (auth.user) {
       allProducts.value = allProducts.value.filter(product => product.user_id != auth.user.id); // 自分が出品した商品を除外
-      const resp2 = await get(`/get_favorites`);
+      const resp2 = await get(`/get-favorites`);
       const favoriteIds = new Set(resp2.data.map((item: any) => item.product_id));
       for (const product of allProducts.value) {
         product.is_favorite = favoriteIds.has(product.id);
@@ -117,13 +117,13 @@ const toggleFavorite = async (product_id: number) => {
 
   try {
     // この商品のいいねをサーバーでチェックしオンならオフに、オフならオンにする。変更後のいいね状態をrespStateで受ける。
-    const respState = await post("/invert_favorite", {
+    const respState = await post("/invert-favorite", {
       'user_id': auth.user.id,
       'product_id': product_id
     })
 
     // この商品につけられているいいねの数をカウントする
-    const respCount = await get(`/count_favorites/${product_id}`);
+    const respCount = await get(`/count-favorites/${product_id}`);
 
     // この商品のオフジェクトを取得し、いいね関連のプロパティを更新
     const targetProduct = allProducts.value.find(x => x.id == product_id);

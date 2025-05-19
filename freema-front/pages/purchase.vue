@@ -103,7 +103,7 @@
 import { ref, onMounted, computed } from 'vue';
 import type { Product } from '~/types/product';
 import type { Category } from '~/types/category';
-import { PAYMENT_OPTIONS } from '@/utils/constants'
+import { PAYMENT_OPTIONS, PAYMENT_MINIMUM_AMOUNT } from '@/utils/constants'
 import { useRouter, useRoute } from "vue-router";
 import useAuth from '~/composables/useAuth';
 import { useAuthStore } from "@/stores/auth";
@@ -229,6 +229,14 @@ const uploadData = async () => {
   // 入力内容チェック
   if (!isPaymentValid.value || !isDestinationValid.value) {
     alert('必要事項が入力されていません');
+    isLoading.value = false;
+    return;
+  }
+
+  // Stripe決済最低金額チェック
+  if (product.value.price < PAYMENT_MINIMUM_AMOUNT[selectedOption.value]) {
+    const msg = `${PAYMENT_OPTIONS[selectedOption.value]}の決済可能な最低金額は${PAYMENT_MINIMUM_AMOUNT[selectedOption.value]}円です`;
+    alert(msg);
     isLoading.value = false;
     return;
   }

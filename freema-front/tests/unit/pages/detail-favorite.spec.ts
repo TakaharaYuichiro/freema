@@ -30,7 +30,7 @@ vi.mock('~/composables/useAuth', () => ({
         return Promise.resolve({ data: products })
       }
       
-      if (url === `/count_favorites/${targetProductId}`) {
+      if (url === `/count-favorites/${targetProductId}`) {
         const data = clonedFavorites.filter(item => item.product_id === targetProductId);
         const count = data?.length;
         return Promise.resolve({ data: { count: count } })
@@ -45,7 +45,7 @@ vi.mock('~/composables/useAuth', () => ({
     }),
 
     post: vi.fn().mockImplementation((url: string, payload: any) => {
-      if (url === `/invert_favorite`) {
+      if (url === `/invert-favorite`) {
         let is_favorite = false;
         const { user_id, product_id } = payload;
         const targetIndex = clonedFavorites.findIndex(item => item.product_id == product_id && item.user_id == user_id);

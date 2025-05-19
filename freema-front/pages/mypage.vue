@@ -142,7 +142,7 @@ const readProducts = async () => {
 
     allProducts.value = allProducts.value.filter(product => product.user_id == auth.user.id);
 
-    const respStates = await get(`/get_favorites`);
+    const respStates = await get(`/get-favorites`);
     const favoriteIds = new Set(respStates.data.map((item: any) => item.product_id));
     for (const product of allProducts.value) {
       product.is_favorite = favoriteIds.has(product.id);
@@ -197,12 +197,12 @@ watch(() => search.triggerSearch, () => {
 const toggleFavorite = async (product_id: number) => {
   const user_id = auth.user.id;
   try {
-    const respState = await post("/invert_favorite", {
+    const respState = await post("/invert-favorite", {
       'user_id': user_id,
       'product_id': product_id
     })
 
-    const respCount = await get(`/count_favorites/${product_id}`);
+    const respCount = await get(`/count-favorites/${product_id}`);
 
     const targetProduct = products.value.find(x => x.id == product_id);
     if (targetProduct) {

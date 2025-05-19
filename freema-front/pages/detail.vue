@@ -120,7 +120,7 @@ const readProduct = async () => {
     };
 
     if (auth.user) {
-      const resp2 = await get(`/get_favorites/${product_id}`);
+      const resp2 = await get(`/get-favorites/${product_id}`);
       product.value.is_favorite = resp2.is_favorite;
     }
 
@@ -142,14 +142,14 @@ const toggleFavorite = async (product_id: number) => {
 
   try {
     // この商品のいいねをサーバーでチェックしオンならオフに、オフならオンにする。変更後のいいね状態をrespStateで受ける。
-    const respState = await post("/invert_favorite", {
+    const respState = await post("/invert-favorite", {
       'user_id': auth.user.id,
       'product_id': product_id
     })
     product.value.is_favorite = respState.is_favorite;
 
     // この商品につけられているいいねの数をカウントする
-    const respCount = await get(`/count_favorites/${product_id}`);
+    const respCount = await get(`/count-favorites/${product_id}`);
     product.value.favorites_count = respCount.data.count;
 
     await voteRef.value?.refreshData();

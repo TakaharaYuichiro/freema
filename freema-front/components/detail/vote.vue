@@ -60,7 +60,7 @@ const countEvaluations = async () => {
 
 const countFavorites = async () => {
   try {
-    const resp = await get(`/count_favorites/${product.value.id}`);
+    const resp = await get(`/count-favorites/${product.value.id}`);
     favoriteCount.value = resp.data.count;
   } catch (err) {
     console.error('読み込み失敗', err);

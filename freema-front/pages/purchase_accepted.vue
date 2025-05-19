@@ -87,7 +87,7 @@ const handleSubmit = async () => {
       method: 'POST',
       body: { purchaseId: purchaseId.value }
     })
-    router.push('/payment');
+    router.push('/payment_card');
   }
 }
 

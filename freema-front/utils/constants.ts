@@ -10,3 +10,7 @@ export const PAYMENT_OPTIONS: Record<number, string> = {
   2: 'カード支払い',
 };
 
+export const PAYMENT_MINIMUM_AMOUNT: Record<number, number> = {
+  1: 120,  // Stripe コンビニ決済の最低金額
+  2: 50,   // Stripe カード決済の最低金額
+};
