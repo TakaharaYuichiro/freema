@@ -69,13 +69,10 @@ const readPurchase = async () => {
 
 const konbiniPayment = async () => {
   try {
-    console.log('konbiniPayment1: ', purchaseId.value, price.value);
     const res = await post('/konbini-payment', {
       purchase_id: purchaseId.value,
       total_price: price.value,
     })
-
-    console.log('konbiniPayment2: ', res);
 
     if (res.payment_info) {
       paymentInfo.value = res.payment_info;
@@ -95,7 +92,7 @@ const handleConfirm = (url: string) => {
 const handleSubmit = async () => {
   // purchaseの支払日を記録
   try {
-    const res = await post('/konbini-payment/complete', {
+    await post('/konbini-payment/complete', {
       purchase_id: purchaseId.value,
       payment_id: paymentData.value.payment_intent_id,
       client_secret: paymentData.value.client_secret,
