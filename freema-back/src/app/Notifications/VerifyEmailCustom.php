@@ -36,7 +36,6 @@ class VerifyEmailCustom extends BaseVerifyEmail
   public function toMail($notifiable)
   {
     $url = $this->verificationUrl($notifiable);
-
     return (new MailMessage)
       ->subject('メールアドレス確認')
       ->greeting('こんにちは！')

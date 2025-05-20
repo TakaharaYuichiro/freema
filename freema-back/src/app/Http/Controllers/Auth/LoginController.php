@@ -31,10 +31,10 @@ class LoginController extends Controller
     ]);
   }
 
-  public function logout(Request $request)
-  {
-    $request->user()->currentAccessToken()->delete();
+  // public function logout(Request $request)
+  // {
+  //   $request->user()->currentAccessToken()->delete();
 
-    return response()->json(['message' => 'ログアウトしました']);
-  }
+  //   return response()->json(['message' => 'ログアウトしました']);
+  // }
 }
