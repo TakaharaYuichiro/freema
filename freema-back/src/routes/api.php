@@ -30,15 +30,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
   return response()->json($request->user());
 });
 
-Route::post('/login', [LoginController::class, 'login']);
 Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/email/verification-notification', [EmailVerificationController::class, 'notification'])->middleware('auth:sanctum');
 Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verification'])->middleware(['signed', 'auth:sanctum'])->name('verification.verify');
 Route::post('/email/resend', [EmailVerificationController::class, 'resend'])->middleware(['auth:sanctum']);
+Route::post('/login', [LoginController::class, 'login']);
 
 Route::apiResource('/users', UserController::class)->middleware(['auth:sanctum']);
-Route::apiResource('/purchases', PurchaseController::class)->middleware(['auth:sanctum']);
 Route::apiResource('/products', ProductController::class); // auth:sanctumのmiddlewareは、Controller側で制御
+Route::apiResource('/purchases', PurchaseController::class)->middleware(['auth:sanctum']);
 Route::apiResource('/categories', CategoryController::class); // auth:sanctumのmiddlewareは、Controller側で制御
 Route::apiResource('/evaluations', EvaluationController::class);  // auth:sanctumのmiddlewareは、Controller側で制御
 
