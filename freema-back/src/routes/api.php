@@ -42,7 +42,7 @@ Route::apiResource('/purchases', PurchaseController::class)->middleware(['auth:s
 Route::apiResource('/categories', CategoryController::class); // auth:sanctumのmiddlewareは、Controller側で制御
 Route::apiResource('/evaluations', EvaluationController::class);  // auth:sanctumのmiddlewareは、Controller側で制御
 
-Route::post('/category-products', [CategoryProductController::class, 'store']);
+Route::post('/category-products', [CategoryProductController::class, 'store'])->middleware('auth:sanctum');
 
 Route::get('/get-favorites', [FavoriteController::class, 'getFavorites'])->middleware('auth:sanctum');
 Route::get('/get-favorites/{product_id}', [FavoriteController::class, 'showFavorites'])->middleware('auth:sanctum');
