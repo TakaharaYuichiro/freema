@@ -43,6 +43,6 @@ class VerifyEmailCustom extends BaseVerifyEmail
       ->line('以下のリンクをクリックしてメールアドレスを確認してください。')
       ->action('メールアドレスを確認する', $url)
       ->line('もしこのメールに覚えがない場合は、無視してください。')
-      ->salutation('Freema サポートチームより');
+      ->salutation('coachtechフリマ サポートチームより');
   }
 }
