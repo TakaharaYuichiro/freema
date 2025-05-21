@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import useAuth from '~/composables/useAuth';
 
 definePageMeta({ middleware: 'auth' });

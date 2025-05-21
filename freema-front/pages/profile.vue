@@ -125,7 +125,7 @@ const handleFileChange = (event: Event) => {
     const file = target.files[0];
     selectedFile.value = file;
     previewUrl.value = URL.createObjectURL(file);
-    avatar.value = file; 
+    avatar.value = file;
   }
 };
 
@@ -176,8 +176,8 @@ const uploadData = async () => {
       img_filename: imgFileName == '' ? null : imgFileName
     };
 
-    const resp2 = await put(`/users/${auth.user.id}`, buffUser);
-    if (resp2) {
+    const respUser = await put(`/users/${auth.user.id}`, buffUser);
+    if (respUser) {
       auth.updateUser(buffUser);  // localStrageをアップデート
       router.push('/');
     } else {

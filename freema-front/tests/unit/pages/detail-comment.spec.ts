@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen, waitFor, within, fireEvent } from '@testing-library/vue'
+import { render, screen, waitFor, fireEvent } from '@testing-library/vue'
 import { createTestingPinia } from '@pinia/testing'
 import { defineComponent } from 'vue'
 import DetailPage from '~/pages/detail.vue'
@@ -8,8 +8,6 @@ import '@testing-library/jest-dom'
 // このテストで使用するテスト用データ
 import { mockProducts } from '../../mockData/mockProducts'
 import { mockEvaluations } from '../../mockData/mockEvaluations'
-import { mockFavorites } from '../../mockData/mockFavorites'
-const clonedFavorites = structuredClone(mockFavorites);   // mockFavoritesに破壊的名変更を行うので、ディープコピーしてから使う
 
 // テスト条件
 const targetProductId = 1;

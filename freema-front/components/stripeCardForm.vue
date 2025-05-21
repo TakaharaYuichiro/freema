@@ -27,6 +27,7 @@
 import { ref, onMounted } from 'vue'
 import { loadStripe } from '@stripe/stripe-js'
 import useAuth from '~/composables/useAuth';
+import { useRouter } from "vue-router";
 
 const props = defineProps<{
   purchaseId: number

@@ -5,7 +5,7 @@ import useAuth from '~/composables/useAuth';
 const route = useRoute();
 const router = useRouter();
 const auth = useAuthStore();
-const { verifyEmail, error } = useAuth();
+const { verifyEmail } = useAuth();
 
 const verify = async () => {
   const id = route.query.id as string;

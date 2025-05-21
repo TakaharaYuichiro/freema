@@ -15,7 +15,7 @@
 
     <div class="sub-group">
       <div class="sub-title">みんなのコメント(<span data-testid="product-item--evaluation-count2">{{ evaluations.length
-      }}</span>)</div>
+          }}</span>)</div>
       <div class="comment-container" v-for="evaluation in evaluations" :key="evaluation.id">
         <div class="comment-header">
           <div class="comment-header__info">
@@ -40,12 +40,11 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
-import type { Evaluation } from '~/types/evaluation';
 import useAuth from '~/composables/useAuth';
 import { useAuthStore } from "@/stores/auth";
 import { useField, useForm } from 'vee-validate';
-import * as yup from 'yup';
 import { commentSchema } from '@/composables/validations/commentSchema';
+import type { Evaluation } from '~/types/evaluation';
 import type { CommentFormValues } from '@/composables/validations/commentSchema';
 
 const { get, post, del } = useAuth();
@@ -55,13 +54,6 @@ const props = defineProps<{
 }>();
 const emit = defineEmits(['updated']);  // 兄弟コンポーネント(/detail/vote)のデータを更新するためのイベント
 const evaluations = ref<Evaluation[]>([]);
-
-// interface FormValues {
-//   comment: string;
-// }
-// const schema = yup.object({
-//   comment: yup.string().required('コメントを入力してください').max(255, 'コメントは255文字以内で入力してください')
-// });
 
 const { meta } = useForm<CommentFormValues>({ validationSchema: commentSchema });
 const isFormValid = computed(() => meta.value.valid);

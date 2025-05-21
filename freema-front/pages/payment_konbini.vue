@@ -27,8 +27,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import useAuth from '~/composables/useAuth';
+import { useRouter } from "vue-router";
 
 definePageMeta({ middleware: 'auth' });
 
@@ -69,14 +70,14 @@ const readPurchase = async () => {
 
 const konbiniPayment = async () => {
   try {
-    const res = await post('/konbini-payment', {
+    const resp = await post('/konbini-payment', {
       purchase_id: purchaseId.value,
       total_price: price.value,
     })
 
-    if (res.payment_info) {
-      paymentInfo.value = res.payment_info;
-      paymentData.value = res;
+    if (resp.payment_info) {
+      paymentInfo.value = resp.payment_info;
+      paymentData.value = resp;
     } else {
       error.value = '支払い情報を取得できませんでした';
     }
