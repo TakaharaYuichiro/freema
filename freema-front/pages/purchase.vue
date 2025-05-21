@@ -31,7 +31,7 @@
             </select>
           </div>
         </div>
-        <div class="error-massage">{{ isPaymentValid ? '' : "お支払い方法が選択されていません" }}</div>
+        <div class="error-massage" >{{ errorPayment }}</div>
       </div>
 
       <div class="group">
@@ -46,19 +46,19 @@
             <tbody>
               <tr class="send-row">
                 <th class="send-row__title">郵便番号</th>
-                <td class="send-row__content" data-testid="sendto-zipcode">{{ formValues.zipcode }}</td>
+                <td class="send-row__content" data-testid="sendto-zipcode">{{ zipcode }}</td>
               </tr>
               <tr class="send-row">
                 <th class="send-row__title">住所</th>
-                <td class="send-row__content" data-testid="sendto-address">{{ formValues.address }}</td>
+                <td class="send-row__content" data-testid="sendto-address">{{ address }}</td>
               </tr>
               <tr class="send-row">
                 <th class="send-row__title">建物名</th>
-                <td class="send-row__content" data-testid="sendto-building">{{ formValues.building }}</td>
+                <td class="send-row__content" data-testid="sendto-building">{{ building }}</td>
               </tr>
               <tr class="send-row">
                 <th class="send-row__title">配送先氏名</th>
-                <td class="send-row__content"><span data-testid="sendto-name">{{ formValues.to_name }} </span>様宛</td>
+                <td class="send-row__content"><span data-testid="sendto-name">{{ to_name }} </span>様宛</td>
               </tr>
             </tbody>
           </table>
@@ -67,7 +67,7 @@
       </div>
     </div>
 
-    <PurchaseDestinationModal v-model:modelValue="modalOpen" :formData="formValues" @save="handleSave" />
+    <PurchaseDestinationModal v-model:modelValue="modalOpen" :formData="destinationFormValues" @save="handleSave" />
 
     <div class="right-section">
       <table class="summary-table">
@@ -91,7 +91,7 @@
       <div class="submit-button-container">
         <client-only>
           <button class="button"
-            :disabled="product.purchases_exists || !auth.user || !isPaymentValid || !isDestinationValid"
+            :disabled="product.purchases_exists || !auth.user || !isFormValid"
             @click="uploadData" data-testid="purchase-button">購入する</button>
         </client-only>
       </div>
@@ -108,6 +108,10 @@ import { useRouter, useRoute } from "vue-router";
 import useAuth from '~/composables/useAuth';
 import { useAuthStore } from "@/stores/auth";
 import PurchaseDestinationModal from '~/components/purchase/destinationModal.vue';
+import type { PurchaseFormValues } from '@/composables/validations/purchaseSchema';
+import type { DestinationFormValues } from '@/composables/validations/destinationSchema';
+import { useForm, useField } from 'vee-validate';
+import { purchaseSchema } from '@/composables/validations/purchaseSchema';
 
 typeof definePageMeta === 'function' && definePageMeta({ middleware: 'auth' }); // テスト時には飛ばす
 
@@ -119,35 +123,52 @@ const isLoading = ref(false);   // ボタン連続クリック防止用フラグ
 
 const product_id = route.query.product_id;
 const modalOpen = ref(false)
-const formValues = ref({
-  zipcode: '',
-  address: '',
-  building: '',
-  to_name: '',
+
+const { meta } = useForm<PurchaseFormValues>({
+  validationSchema: purchaseSchema,
+  initialValues: {
+    method_index: 0,
+  },
 });
 
-const selectedOption = ref<number>(0)
+const { value: selectedOption, errorMessage: errorPayment } = useField<number>('method_index');
+const { value: zipcode, errorMessage: errorZipcode } = useField<string>('destination.zipcode');
+const { value: address, errorMessage: errorAddress } = useField<string>('destination.address');
+const { value: to_name, errorMessage: errorToName } = useField<string>('destination.to_name');
+const { value: building } = useField<string>('destination.building');
+
+const isFormValid = computed(() => meta.value.valid);
+const destinationFormValues = computed(() => {
+  return {
+    zipcode: zipcode.value,
+    address: address.value,
+    building: building.value,
+    to_name: to_name.value 
+  };
+});
+
 const selectedOptionsLabel = computed(() => {
   return selectedOption.value == 0 ? '選択されていません' : PAYMENT_OPTIONS[selectedOption.value];
 });
 
-const handleSave = (newData: typeof formValues.value) => {
-  formValues.value = newData;
+const handleSave = (newData: DestinationFormValues) => {
+  zipcode.value = newData.zipcode;
+  address.value = newData.address;
+  building.value = newData.building;
+  to_name.value = newData.to_name;
 }
 
-const isPaymentValid = computed(() => {
-  return selectedOption.value != 0
-});
 const isDestinationValid = computed(() => {
-  return (formValues.value.zipcode != '' && formValues.value.address != '' && formValues.value.to_name != '');
+  return (!errorZipcode.value && !errorAddress.value && !errorToName.value );
 });
 
 const setInitialValues = () => {
+  selectedOption.value = 0;
   if (auth.user) {
-    formValues.value.zipcode = auth.user.zipcode || '';
-    formValues.value.address = auth.user.address || '';
-    formValues.value.building = auth.user.building || '';
-    formValues.value.to_name = auth.user.name || '';
+    zipcode.value = auth.user.zipcode || '';
+    address.value = auth.user.address || '';
+    building.value = auth.user.building || '';
+    to_name.value = auth.user.name || '';
   }
 }
 
@@ -226,16 +247,10 @@ const uploadData = async () => {
     return;
   }
 
-  // 入力内容チェック
-  if (!isPaymentValid.value || !isDestinationValid.value) {
-    alert('必要事項が入力されていません');
-    isLoading.value = false;
-    return;
-  }
-
   // Stripe決済最低金額チェック
-  if (product.value.price < PAYMENT_MINIMUM_AMOUNT[selectedOption.value]) {
-    const msg = `${PAYMENT_OPTIONS[selectedOption.value]}の決済可能な最低金額は${PAYMENT_MINIMUM_AMOUNT[selectedOption.value]}円です`;
+  const method = selectedOption.value;
+  if (product.value.price < PAYMENT_MINIMUM_AMOUNT[method]) {
+    const msg = `${PAYMENT_OPTIONS[method]}の決済可能な最低金額は${PAYMENT_MINIMUM_AMOUNT[method]}円です`;
     alert(msg);
     isLoading.value = false;
     return;
@@ -262,10 +277,10 @@ const uploadData = async () => {
     const buffPurchase = {
       product_id: product_id,
       user_id: auth.user.id,
-      zipcode: formValues.value.zipcode,
-      address: formValues.value.address,
-      to_name: formValues.value.to_name,
-      building: formValues.value.building,
+      zipcode: zipcode.value,
+      address: address.value,
+      to_name: to_name.value,
+      building: building.value,
       method_index: selectedOption.value,
       paid_at: paid_at,
     };

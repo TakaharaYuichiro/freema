@@ -35,26 +35,18 @@
 
 <script setup lang="ts">
 import { useField, useForm } from 'vee-validate';
-import * as yup from 'yup';
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import useAuth from '~/composables/useAuth';
 import { useRouter } from 'vue-router'
+import { loginSchema } from '@/composables/validations/loginSchema';
+import type { LoginFormValues } from '@/composables/validations/loginSchema';
 
 const router = useRouter();
-const { login, error } = useAuth();
+const { login } = useAuth();
 const isLoading = ref(false);   // ボタン連続クリック防止用フラグ
 const errorsSubmit = ref('');
 
-interface FormValues {
-  email: string;
-  password: string;
-}
-const schema = yup.object({
-  email: yup.string().required('メールアドレスを入力してください').email('有効なメールアドレスを入力してください'),
-  password: yup.string().required('パスワードを入力してください').min(8, 'パスワードは8文字以上で入力してください')
-});
-
-const { validate } = useForm<FormValues>({ validationSchema: schema });
+const { validate } = useForm<LoginFormValues>({ validationSchema: loginSchema });
 
 const { value: email, errorMessage: errorsEmail, meta: metaEmail } = useField<string>('email');
 const { value: password, errorMessage: errorsPassword, meta: metaPassword } = useField<string>('password');

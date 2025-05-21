@@ -49,34 +49,17 @@
 
 <script setup lang="ts">
 import { useField, useForm } from 'vee-validate';
-import * as yup from 'yup';
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import useAuth from '~/composables/useAuth';
 import { useRouter } from 'vue-router'
+import { registerSchema } from '@/composables/validations/registerSchema';
+import type { RegisterFormValues } from '@/composables/validations/registerSchema';
 
 const router = useRouter();
 const isLoading = ref(false);   // ボタン連続クリック防止用フラグ
 
-interface FormValues {
-  name: string;
-  email: string;
-  password: string;
-  confirm_password: string;
-}
+const { validate } = useForm<RegisterFormValues>({ validationSchema: registerSchema });
 
-const schema = yup.object({
-  name: yup.string().required('お名前を入力してください'),
-  email: yup.string().required('メールアドレスを入力してください').email('有効なメールアドレスを入力してください'),
-  password: yup.string().required('パスワードを入力してください').min(8, 'パスワードは8文字以上で入力してください'),
-  confirm_password: yup
-    .string()
-    .oneOf([yup.ref('password')], 'パスワードと一致しません')
-    .required('パスワード確認は必須です'),
-});
-
-const { validate } = useForm<FormValues>({ validationSchema: schema });
-
-// 各フィールドのバリデーション設定
 const { value: name, errorMessage: errorsName, meta: metaName } = useField<string>('name');
 const { value: email, errorMessage: errorsEmail, meta: metaEmail } = useField<string>('email');
 const { value: password, errorMessage: errorsPassword, meta: metaPassword } = useField<string>('password');

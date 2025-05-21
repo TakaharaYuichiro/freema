@@ -9,8 +9,9 @@
         </client-only>
       </div>
       <div>
-        <input ref="fileInput" type="file" accept="image/*" style="display:none" @change="handleFileChange">
+        <input ref="fileInput" type="file" accept=".jpeg,.jpg,.png" style="display:none" @change="handleFileChange">
         <button class="upload-button" @click="changeFile">画像を選択する</button>
+        <div class="form__error" v-if="errorsAvatar">{{ errorsAvatar }}</div>
       </div>
     </div>
 
@@ -66,37 +67,17 @@ import { useRouter } from "vue-router";
 import useAuth from '~/composables/useAuth';
 import { useAuthStore } from "@/stores/auth";
 import { useField, useForm } from 'vee-validate';
-import * as yup from 'yup';
+import { profileSchema } from '@/composables/validations/profileSchema';
+import type { ProfileFormValues } from '@/composables/validations/profileSchema';
 
 typeof definePageMeta === 'function' && definePageMeta({ middleware: 'auth' }); // テスト時には飛ばす
-
-interface FormValues {
-  name: string;
-  zipcode: string;
-  address: string;
-  building: string;
-}
 
 const router = useRouter();
 const { get, post, put } = useAuth();
 const auth = useAuthStore();
 
-const schema = yup.object({
-  name: yup.string().min(3, 'ユーザー名は3文字以上必要です').max(191, 'ユーザーは191文字以内としてください').required('ユーザー名は必須です'),
-  zipcode: yup
-    .string()
-    .nullable()
-    .notRequired()
-    .matches(/^\d{7}$|^\d{3}-\d{4}$/, {
-      message: '郵便番号の形式が正しくありません(数値7桁 または 3桁-4桁)。',
-      excludeEmptyString: true,
-    }),
-  address: yup.string().max(191, '住所は191文字以内としてください'),
-  building: yup.string().max(191, '建物名は191文字以内としてください'),
-});
-
-const { setValues, meta } = useForm<FormValues>({
-  validationSchema: schema,
+const { setValues, meta } = useForm<ProfileFormValues>({
+  validationSchema: profileSchema,
   initialValues: {
     name: '',
     zipcode: '',
@@ -111,6 +92,7 @@ const { value: name, errorMessage: errorsName, meta: metaName } = useField<strin
 const { value: zipcode, errorMessage: errorsZipcode, meta: metaZipcode } = useField<string>('zipcode');
 const { value: address, errorMessage: errorsAddress, meta: metaAddress } = useField<string>('address');
 const { value: building, errorMessage: errorsBuilding, meta: metaBuilding } = useField<string>('building');
+const { value: avatar, errorMessage: errorsAvatar, meta: metaAvatar } = useField<File | null>('avatar');
 
 const setInitialValues = () => {
   if (auth.user) {
@@ -138,10 +120,12 @@ const imageSrc = computed(() => {
 const selectedFile = ref<File | null>(null);
 const fileInput = ref<HTMLInputElement | null>(null)
 const handleFileChange = (event: Event) => {
-  const target = event.target as HTMLInputElement
+  const target = event.target as HTMLInputElement;
   if (target.files && target.files.length > 0) {
-    selectedFile.value = target.files[0]
-    previewUrl.value = URL.createObjectURL(selectedFile.value)
+    const file = target.files[0];
+    selectedFile.value = file;
+    previewUrl.value = URL.createObjectURL(file);
+    avatar.value = file; 
   }
 };
 

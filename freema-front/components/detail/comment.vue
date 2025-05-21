@@ -45,6 +45,8 @@ import useAuth from '~/composables/useAuth';
 import { useAuthStore } from "@/stores/auth";
 import { useField, useForm } from 'vee-validate';
 import * as yup from 'yup';
+import { commentSchema } from '@/composables/validations/commentSchema';
+import type { CommentFormValues } from '@/composables/validations/commentSchema';
 
 const { get, post, del } = useAuth();
 const auth = useAuthStore();
@@ -54,14 +56,14 @@ const props = defineProps<{
 const emit = defineEmits(['updated']);  // 兄弟コンポーネント(/detail/vote)のデータを更新するためのイベント
 const evaluations = ref<Evaluation[]>([]);
 
-interface FormValues {
-  comment: string;
-}
-const schema = yup.object({
-  comment: yup.string().required('コメントを入力してください').max(255, 'コメントは255文字以内で入力してください')
-});
+// interface FormValues {
+//   comment: string;
+// }
+// const schema = yup.object({
+//   comment: yup.string().required('コメントを入力してください').max(255, 'コメントは255文字以内で入力してください')
+// });
 
-const { meta } = useForm<FormValues>({ validationSchema: schema });
+const { meta } = useForm<CommentFormValues>({ validationSchema: commentSchema });
 const isFormValid = computed(() => meta.value.valid);
 
 const { value: newComment, errorMessage: errorsComment, meta: metaComment } = useField<string>('comment');

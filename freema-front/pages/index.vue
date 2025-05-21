@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, computed } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { useAuthStore } from "@/stores/auth";
 import { useSearchStore } from '@/stores/search'
 import useAuth from '~/composables/useAuth';

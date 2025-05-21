@@ -10,8 +10,9 @@
           <img class="preview__img" :src="imageSrc" alt="画像プレビュー" />
         </div>
         <div class="preview__input-container">
-          <input ref="fileInput" type="file" accept="image/*" style="display:none" @change="handleFileChange">
+          <input ref="fileInput" type="file" accept=".jpeg,.jpg,.png" style="display:none" @change="handleFileChange">
           <button class="file-upload-button" @click="changeFile">画像を選択する</button>
+          <div class="form__error" v-if="errorsProductImage">{{ errorsProductImage }}</div>
         </div>
       </div>
     </div>
@@ -27,6 +28,7 @@
               @click="selectCategory(category.id)" data-testid="category-button">{{ category.name }}
             </button>
           </template>
+          <div class="form__error" v-if="errorsCategory">{{ errorsCategory }}</div>
         </div>
       </div>
       <div class="sub-group sub-group__fixed-height">
@@ -83,12 +85,13 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useField, useForm } from 'vee-validate';
-import * as yup from 'yup';
 import { PRODUCT_CONDITIONS } from '@/utils/constants'
 import type { Category } from '~/types/category';
 import useAuth from '~/composables/useAuth';
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
+import { listingSchema } from '@/composables/validations/listingSchema';
+import type { ListingFormValues } from '@/composables/validations/listingSchema';
 
 typeof definePageMeta === 'function' && definePageMeta({ middleware: 'auth' }); // テスト時には飛ばす
 
@@ -96,29 +99,18 @@ type CategoryExp = Category & {
   selected: boolean
 }
 
-interface FormValues {
-  productName: string;
-  productPrice: number;
-  conditionIndex: number;
-}
-
 const { get, post } = useAuth();
 const auth = useAuthStore();
 const router = useRouter();
 const isLoading = ref(false);   // ボタン連続くリック防止用フラグ
 
-const schema = yup.object({
-  productName: yup.string().min(3, '商品名は3文字以上必要です').required('商品名は必須です'),
-  productPrice: yup.number().typeError("数値を入力してください").min(0, "0以上の整数を入力してください").integer("整数を入力してください"),
-  conditionIndex: yup.number().min(1, '状態を選択してください'),
-});
-
-const { meta } = useForm<FormValues>({
-  validationSchema: schema,
+const { meta } = useForm<ListingFormValues>({
+  validationSchema: listingSchema,
   initialValues: {
     productName: '',
     productPrice: 0,
     conditionIndex: 0,
+    selectedCategoryIds: []
   },
   validateOnMount: true,
 });
@@ -127,6 +119,8 @@ const isFormValid = computed(() => meta.value.valid);
 const { value: productName, errorMessage: errorsProductName, meta: metaProductName } = useField<string>('productName');
 const { value: productPrice, errorMessage: errorsProductPrice, meta: metaProductPrice } = useField<number>('productPrice');
 const { value: conditionIndex, errorMessage: errorsConditionIndex, meta: metaConditionIndex } = useField<number>('conditionIndex');
+const { value: productImage, errorMessage: errorsProductImage, meta: metaProductImage } = useField<File | null>('productImage');
+const { value: selectedCategoryIds, errorMessage: errorsCategory } = useField<number[]>('selectedCategoryIds');
 
 const productBrand = ref('');
 const productContent = ref('');
@@ -147,11 +141,15 @@ const readCategories = async () => {
 };
 
 const selectCategory = (id: number) => {
-  const targetCategory = categories.value.find(x => x.id == id);
-  if (targetCategory) {
-    targetCategory.selected = !targetCategory.selected;
+  const category = categories.value.find((c) => c.id === id);
+  if (category) {
+    category.selected = !category.selected;
+
+    // 選択されているカテゴリIDだけをフィールドに設定
+    const selectedIds = categories.value.filter((c) => c.selected).map((c) => c.id);
+    selectedCategoryIds.value = selectedIds;
   }
-}
+};
 
 const previewUrl = ref<string | null>(null);
 
@@ -168,8 +166,9 @@ const fileInput = ref<HTMLInputElement | null>(null)
 const handleFileChange = (event: Event) => {
   const target = event.target as HTMLInputElement
   if (target.files && target.files.length > 0) {
-    selectedFile.value = target.files[0]
-    previewUrl.value = URL.createObjectURL(selectedFile.value)
+    selectedFile.value = target.files[0];
+    previewUrl.value = URL.createObjectURL(selectedFile.value);
+    productImage.value = selectedFile.value;
   }
 };
 
@@ -214,7 +213,6 @@ const submitData = async () => {
       content: productContent.value,
       img_filename: imgFilePath,
       condition_index: conditionIndex.value,
-      // status_index: 1,
     };
 
     const resp1 = await post('/products', buffProducts);
@@ -299,6 +297,7 @@ onMounted(async () => {
   padding: 10px;
   display: flex;
   align-items: center;
+  margin: 10px 0;
 }
 
 .file-upload-button:hover {

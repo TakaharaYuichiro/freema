@@ -46,35 +46,16 @@
 <script setup lang="ts">
 import { computed, watch } from 'vue'
 import { useField, useForm } from 'vee-validate';
-import * as yup from 'yup';
-
-interface FormValues {
-  zipcode: string;
-  address: string;
-  building: string;
-  to_name: string;
-}
+import { destinationSchema } from '@/composables/validations/destinationSchema';
+import type { DestinationFormValues } from '@/composables/validations/destinationSchema';
 
 const props = defineProps<{
   modelValue: boolean;
-  formData: FormValues;
+  formData: DestinationFormValues;
 }>();
 
-const schema = yup.object({
-  zipcode: yup
-    .string()
-    .required('郵便番号は必須です。')
-    .matches(/^\d{7}$|^\d{3}-\d{4}$/, {
-      message: '郵便番号の形式が正しくありません(数値7桁 または 3桁-4桁)。',
-      excludeEmptyString: true, // 空文字にはマッチをスキップ
-    }),
-  address: yup.string().max(191, '住所は191文字以内としてください。').required('住所は必須です。'),
-  building: yup.string().max(191, '建物名は191文字以内としてください。'),
-  to_name: yup.string().max(191, '配送先氏名は191文字以内としてください。').required('配送先氏名は必須です。'),
-});
-
-const { meta, resetForm, handleSubmit } = useForm<FormValues>({
-  validationSchema: schema,
+const { meta, resetForm, handleSubmit } = useForm<DestinationFormValues>({
+  validationSchema: destinationSchema,
 });
 
 const isFormValid = computed(() => meta.value.valid);
@@ -89,7 +70,7 @@ watch(() => props.formData, (newVal) => {
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: boolean): void;
-  (e: 'save', formValues: any): void;
+  (e: 'save', formValues: DestinationFormValues): void;
 }>();
 
 const submitForm = handleSubmit((values) => {
