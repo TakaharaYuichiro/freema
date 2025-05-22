@@ -317,7 +317,7 @@ Categoryデータの取得や登録などの操作をするためのエンドポ
 ![TABLE SPECIFICATION](readme/imgs/table_purchases.png)
 ![TABLE SPECIFICATION](readme/imgs/table_categories.png)
 ![TABLE SPECIFICATION](readme/imgs/table_category_products.png)
-![TABLE SPECIFICATION](readme/imgs/table_favories.png)
+![TABLE SPECIFICATION](readme/imgs/table_favorites.png)
 ![TABLE SPECIFICATION](readme/imgs/table_evaluations.png)
 
 ## ER図
