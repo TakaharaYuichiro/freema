@@ -90,8 +90,8 @@ import type { Category } from '~/types/category';
 import useAuth from '~/composables/useAuth';
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
-import { listingSchema } from '@/composables/validations/listingSchema';
-import type { ListingFormValues } from '@/composables/validations/listingSchema';
+import { sellSchema } from '@/composables/validations/sellSchema';
+import type { SellFormValues } from '@/composables/validations/sellSchema';
 
 typeof definePageMeta === 'function' && definePageMeta({ middleware: 'auth' }); // テスト時には飛ばす
 
@@ -104,8 +104,8 @@ const auth = useAuthStore();
 const router = useRouter();
 const isLoading = ref(false);   // ボタン連続くリック防止用フラグ
 
-const { meta } = useForm<ListingFormValues>({
-  validationSchema: listingSchema,
+const { meta } = useForm<SellFormValues>({
+  validationSchema: sellSchema,
   initialValues: {
     productName: '',
     productPrice: 0,

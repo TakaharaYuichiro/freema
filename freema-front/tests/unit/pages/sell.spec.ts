@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach} from 'vitest'
-import { render, screen, waitFor, within, fireEvent } from '@testing-library/vue'
+import { render, screen, waitFor, fireEvent } from '@testing-library/vue'
 import { createTestingPinia } from '@pinia/testing'
 import { defineComponent } from 'vue'
 import MypagePage from '~/pages/mypage.vue'
-import ListingPage from '~/pages/listing.vue'
+import SellPage from '~/pages/sell.vue'
 import '@testing-library/jest-dom'    // Chai
 import type { Product } from '~/types/product';
 
@@ -70,7 +70,7 @@ describe('15. 出品商品情報登録', () => {
   it('15-1. 商品出品画面にて必要な情報が保存できること（カテゴリ、商品の状態、商品名、商品の説明、販売価格）', async () => {
     const user = { id: targetUserId, name: 'テストユーザー' };
 
-    render(ListingPage, {
+    render(SellPage, {
       global: {
         plugins: [createTestingPinia({
           stubActions: false,

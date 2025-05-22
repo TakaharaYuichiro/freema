@@ -16,7 +16,7 @@
           <div class="content__button">
             <button class="content__button--show-detail" type="button" @click="showDetail(product.id)">詳しく見る</button>
             <button v-if="product.user_id === auth.user?.id" class="content__button--show-detail" type="button"
-              @click="cancelListing(product.id)">出品取消</button>
+              @click="cancelSell(product.id)">出品取消</button>
             <div class="content__button--favorite__container">
               <button class="content__button--favorite" type="button" @click="toggleFavorite(product.id)">
                 <Icon name="ic:round-star" :style="{ color: product.is_favorite ? 'red' : 'lightgray' }" size="2em" />
@@ -71,7 +71,7 @@ const onImageError = (event: Event) => {
   target.dataset.errorHandled = 'true'
 }
 
-const cancelListing = async (product_id: number) => {
+const cancelSell = async (product_id: number) => {
   if (isLoading.value) return
   isLoading.value = true;
 

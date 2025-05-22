@@ -19,7 +19,7 @@
               <div class="header__user__button-container">
                 <button class="header__user__button" @click="handleLogout" data-testid="logout-button">ログアウト</button>
                 <button class="header__user__button" @click="handleMypage">マイページ</button>
-                <button class="header__user__button" @click="handleListing">出品</button>
+                <button class="header__user__button" @click="handleSell">出品</button>
               </div>
             </template>
             <template v-else>
@@ -68,8 +68,8 @@ const handleLogin = async () => {
   router.push("/login");
 };
 
-const handleListing = () => {
-  router.push("/listing");
+const handleSell = () => {
+  router.push("/sell");
 }
 
 const handleMypage = () => {
