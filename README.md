@@ -313,8 +313,7 @@ Categoryデータの取得や登録などの操作をするためのエンドポ
 ## テーブル設計
 
 ![TABLE SPECIFICATION](readme/imgs/table_users.png)
-![TABLE SPECIFICATION](readme/imgs/datatable_todos2.png)
-![TABLE SPECIFICATION](readme/imgs/datatable_categories2.png)
+![TABLE SPECIFICATION](readme/imgs/table_products.png)
 
 ## ER図
 
