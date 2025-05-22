@@ -145,6 +145,12 @@
     php artisan storage:link
     ```
 
+9. ダミーデータ画像をstorageにコピーしてください
+
+    ``` bash
+    php artisan custom:copy-default-images
+    ```
+
 ## フロントエンドアプリ環境構築
 
 ### Nuxt.js環境構築
