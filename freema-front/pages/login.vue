@@ -126,6 +126,7 @@ const handleLogin = async () => {
   color: #ff0000;
   text-align: left;
   font-size: 0.8rem;
+  padding: 2px 0 0 0;
 }
 
 .form__button {
