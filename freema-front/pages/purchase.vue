@@ -250,7 +250,7 @@ const uploadData = async () => {
   // Stripe決済最低金額チェック
   const method = selectedOption.value;
   if (product.value.price < PAYMENT_MINIMUM_AMOUNT[method]) {
-    const msg = `${PAYMENT_OPTIONS[method]}の決済可能な最低金額は${PAYMENT_MINIMUM_AMOUNT[method]}円です`;
+    const msg = `${PAYMENT_OPTIONS[method]}での決済可能な金額は最低${PAYMENT_MINIMUM_AMOUNT[method]}円です`;
     alert(msg);
     isLoading.value = false;
     return;

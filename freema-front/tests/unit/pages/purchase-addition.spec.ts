@@ -136,7 +136,9 @@ describe('11. 支払い方法選択機能', () => {
       expect(screen.getByTestId('selected-payment-method').textContent?.trim()).toEqual(expectedText);
     });
   })
+})
 
+describe('12. 配送先変更機能', () => {
   it('12-1. 送付先住所変更画面にて登録した住所が商品購入画面に反映されている', async () => {
     const paymentMethodeIndex = 1;  // 「コンビニ払い」でテスト
 
