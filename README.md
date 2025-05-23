@@ -184,11 +184,25 @@
     > APIキーはStripeの公式サイト(<https://stripe.com/>)の開発者ページから取得してください。なお、同サイトで取得した<u>シークレットキー</u>(sk_test_xxxxx)は、バックエンド側(Laravel)の.envに記載してください。
     > また、フロントエンド側の.envファイルにおいて、NUXT_PUBLIC_STRIPE_PUBLIC_KEY以外の環境変数は、「.env.example」に記載の内容から変更不要です。
 
-4. 依存パッケージをインストールしてください（yarn が必要です）。
+4. 依存パッケージをインストールしてください（Yarn が必要です）。
 
     ``` bash
     yarn install
     ```
+
+    > 依存パッケージのインストールには、以下のバージョンが推奨されます。
+    >
+    > - Node.js: >= 18.x
+    > - Yarn: 1.22.x（Yarn 1.x 系）
+    >
+    > Yarn 2（Berry）は非対応です。必ず Yarn 1.x を使用してください。
+    >
+    > ※ 以下のコマンドでバージョンを確認できます。
+    >
+    > ```bash
+    > node -v
+    > yarn -v
+    > ```
 
 ## テストケース
 
@@ -267,13 +281,24 @@
 
 1. ゲストユーザーとしてログインせずにホーム画面にアクセスしている場合は、画面左上の「ログイン」をクリックしてください。また、すでにログインしている場合は、画面左上の「ログアウト」をクリックし、一旦ログアウトしてください。
 2. ログイン画面の下部にある「会員登録はこちら」をクリックしてください。
-
-    ![sample image](readme_fig/ss_menu-to-registration.png)
-
 3. 会員登録画面で名前とメールアドレス、パスワード、確認用パスワードを入力のうえ、会員登録画面で「登録する」をクリックすると、MailHogに確認メールが送信されます (この時点では会員登録は終了していません)。
 4. ブラウザで別のタブを開き、localhost:8025にアクセスして、MailHogを起動してください。
 5. MailHogに届いた「メールアドレス確認」のメールを開き、「メールアドレスを確認する」(もしくはURLリンク)をクリックしてください。
 6. 会員登録が完了するとアプリにログインできます。
+
+## テーブル設計
+
+![TABLE SPECIFICATION](readme/imgs/table_users.png)
+![TABLE SPECIFICATION](readme/imgs/table_products.png)
+![TABLE SPECIFICATION](readme/imgs/table_purchases.png)
+![TABLE SPECIFICATION](readme/imgs/table_categories.png)
+![TABLE SPECIFICATION](readme/imgs/table_category_products.png)
+![TABLE SPECIFICATION](readme/imgs/table_favorites.png)
+![TABLE SPECIFICATION](readme/imgs/table_evaluations.png)
+
+## ER図
+
+![TABLE SPECIFICATION](readme/imgs/er_diagram.png)
 
 ## API仕様
 
@@ -347,18 +372,23 @@ Evaluationデータの取得や登録などの操作をするためのエンド�
 - [データ更新](readme/apis/evaluations/update.md) : `PUT /api/evaluations/{id}`
 - [データ削除](readme/apis/evaluations/destroy.md) : `DELETE /api/evaluations/{id}`
 
-## テーブル設計
+### カテゴリ-商品中間テーブルデータ処理
 
-![TABLE SPECIFICATION](readme/imgs/table_users.png)
-![TABLE SPECIFICATION](readme/imgs/table_products.png)
-![TABLE SPECIFICATION](readme/imgs/table_purchases.png)
-![TABLE SPECIFICATION](readme/imgs/table_categories.png)
-![TABLE SPECIFICATION](readme/imgs/table_category_products.png)
-![TABLE SPECIFICATION](readme/imgs/table_favorites.png)
-![TABLE SPECIFICATION](readme/imgs/table_evaluations.png)
+カテゴリ-商品中間テーブルに新規データを登録します。
 
-## ER図
+- [データ登録](readme/apis/category_products/store.md) : `POST /api/category-products`
 
-![TABLE SPECIFICATION](readme/imgs/er_diagram.png)
+### お気に入りデータ評価処理
+
+Favoriteデータに関連する処理を行います。
+
+- [全てのデータ取得](readme/apis/favorites/get-favorites_index.md) : `GET /api/get-favorites`
+- [データ取得](readme/apis/favorites/get-favorites_show.md) : `GET /api/get-favorites/{product_id}`
+- [登録数カウント](readme/apis/favorites/count-favorites.md) : `GET /api/count-favorites/{product_id}`
+- [お気に入りクリック](readme/apis/favorites/invert-favorites.md) : `POST /api/invert-favorite`
+
+### 画像アップロード処理
+
+- [アップロード](readme/apis/upload-image.md.md) : `POST /api/upload-image`
 
 以上
