@@ -1,12 +1,12 @@
-# ユーザー登録
+# 会員登録
 
-新しいユーザーデータを登録します。
+DBに会員情報を登録します。なお、この処理では「仮登録」となり、「本登録」のためにはメール確認の処理が必要です。
 
 **URL** : `/api/register/`
 
 **メソッド** : `POST`
 
-**認証** : 必須
+**認証** : 不要
 
 **権限** : (権限なし)
 
@@ -14,9 +14,10 @@
 
 ```json
 {
-  "name": "ユーザー名", // 必須、文字列型、1〜191文字
+  "name": "ユーザー名", // 必須、文字列型
   "email": "test@test.com", //必須, メールアドレス、重複不可
-  "idToken": "Firebaseの認証トークン" // 必須、文字列型
+  "password": "password", // 必須、文字列型、最低8文字、password_confirmationと一致していることが必要
+  "password_confirmation": "password"
 }
 ```
 
@@ -32,20 +33,30 @@
 
 ```json
 {
-    "message": "Updated successfully"
+    "message": "ユーザーを仮登録しました。確認メールをご確認ください。",
+    "token": "xxxxx"
 }
 ```
 
 ## エラーレスポンス
 
-**条件** : データ登録に失敗。例）データ制約不整合、など。
+**条件** : データ登録に失敗。例）emailが登録済み、データ不整合、など。
 
-**コード** : `400 BAD REQUEST`
+**コード** : `422 Unprocessable Content`
 
 **戻り値の例** :
 
 ```json
 {
-    "error": "Resource not found"
+    "error": {
+        "message": "Validation failed",
+        "code": "VALIDATION_FAILED",
+        "status": 422,
+        "errors": {
+            "email": [
+                "指定のemailは既に使用されています。"
+            ]
+        }
+    }
 }
 ```

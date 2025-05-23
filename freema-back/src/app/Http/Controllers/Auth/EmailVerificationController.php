@@ -36,7 +36,7 @@ class EmailVerificationController extends Controller
 
     $user->sendEmailVerificationNotification();
 
-    return response()->json(['message' => '確認メールを再送信しました。']);
+    return response()->json(['message' => '確認メールを送信しました。']);
   }
 
   /**
@@ -50,7 +50,7 @@ class EmailVerificationController extends Controller
     $user = $request->user(); // authorize()で本人確認済み
 
     if ($user->hasVerifiedEmail()) {
-      return response()->json(['message' => 'Already verified']);
+      return response()->json(['message' => '既に確認済みです。']);
     }
 
     $request->fulfill(); // email_verified_at を更新＆Verifiedイベント発火
@@ -59,7 +59,7 @@ class EmailVerificationController extends Controller
     $token = $user->createToken('email-verify')->plainTextToken;
 
     return response()->json([
-      'message' => 'メールアドレスを確認しました',
+      'message' => 'メールアドレスを確認しました。',
       'token' => $token,
       'user' => $user
     ]);
@@ -70,7 +70,7 @@ class EmailVerificationController extends Controller
       return response()->json(['message' => 'ユーザーが見つかりません。'], 401);
     }
     if ($request->user()->hasVerifiedEmail()) {
-      return response()->json(['message' => 'すでに確認済みです。'], 400);
+      return response()->json(['message' => 'すでに確認済みです。'], 200);
     }
     $request->user()->sendEmailVerificationNotification();
     return response()->json(['message' => '確認メールを再送しました。']);

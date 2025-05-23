@@ -277,11 +277,20 @@
 
 ## API仕様
 
-### ユーザー登録
+### 会員登録
 
-Firebaseに登録したユーザーのuidと、その他のユーザー情報を紐づけるためのテーブルにデータを登録します。
+DBに会員情報を登録します。なお、この処理では「仮登録」となり、「本登録」のためにはメール確認の処理が必要です。
 
-- [ユーザー登録](readme/apis/register.md) : `POST /api/register`
+- [会員登録](readme/apis/register.md) : `POST /api/register`
+
+### 会員登録確認
+
+メールによる本人確認を行います。メールの送信や、DBの会員情報を「本登録」に変更する処理を実施します。
+
+- [確認メール送信](readme/apis/register.md) : `POST /api/email/verification-notification`
+- [確認メールリンク認証](readme/apis/register.md) : `GET /api/email/verify/{id}/{hash}`
+- [確認メール再送信](readme/apis/register.md) : `POST /api/email/resend`
+
 
 ### ユーザーデータ取得
 
