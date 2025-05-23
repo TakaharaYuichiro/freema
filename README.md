@@ -291,13 +291,21 @@ DBに会員情報を登録します。なお、この処理では「仮登録」
 - [確認メールリンク認証](readme/apis/verify_email/verify.md) : `GET /api/email/verify/{id}/{hash}`
 - [確認メール再送信](readme/apis/verify_email/resend.md) : `POST /api/email/resend`
 
+### ログイン
 
-### ユーザーデータ取得
+メールアドレスとパスワードを使ってログインします。
 
-DBに登録されているユーザーデータを取得します。
+- [ログイン](readme/apis/login.md) : `POST /api/login`
 
-- [ユーザー一覧取得](readme/apis/users.md) : `GET /api/users/`
-- [ユーザーチェック](readme/apis/usercheck.md) : `GET /api/usercheck/`
+### ユーザーデータ処理
+
+Userデータの取得や登録などの操作をするためのエンドポイントです。
+
+- [全てのデータ取得](readme/apis/user/index.md) : `GET /api/user/`
+- [データ登録](readme/apis/user/store.md) : `POST /api/user/`
+- [データ取得](readme/apis/user/show.md) : `GET /api/user/{id}/`
+- [データ更新](readme/apis/user/update.md) : `PUT /api/user/{id}/`
+- [データ削除](readme/apis/user/destroy.md) : `DELETE /api/user/{id}/`
 
 ### ToDoデータ操作
 

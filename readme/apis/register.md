@@ -2,24 +2,33 @@
 
 DBに会員情報を登録します。なお、この処理では「仮登録」となり、「本登録」のためにはメール確認の処理が必要です。
 
+---
+
 **URL** : `/api/register/`
 
 **メソッド** : `POST`
 
 **認証** : 不要
 
-**権限** : (権限なし)
+**権限** : 不要
 
 **データ制約** :
 
 ```json
 {
-  "name": "ユーザー名", // 必須、文字列型
-  "email": "test@test.com", //必須, メールアドレス、重複不可
-  "password": "password", // 必須、文字列型、最低8文字、password_confirmationと一致していることが必要
+  "name": "ユーザー名", 
+  "email": "test@test.com",
+  "password": "password",
   "password_confirmation": "password"
 }
 ```
+
+- name：必須、文字列型
+- email：必須、メールアドレス、重複不可
+- password：必須、8文字以上、password_confirmation と一致すること
+- password_confirmation：password と同じ値
+
+---
 
 **ヘッダー制約** : なし
 
