@@ -287,9 +287,9 @@ DBに会員情報を登録します。なお、この処理では「仮登録」
 
 メールによる本人確認を行います。メールの送信や、DBの会員情報を「本登録」に変更する処理を実施します。
 
-- [確認メール送信](readme/apis/register.md) : `POST /api/email/verification-notification`
-- [確認メールリンク認証](readme/apis/register.md) : `GET /api/email/verify/{id}/{hash}`
-- [確認メール再送信](readme/apis/register.md) : `POST /api/email/resend`
+- [確認メール送信](readme/apis/verify_email/verification-notification.md) : `POST /api/email/verification-notification`
+- [確認メールリンク認証](readme/apis/verify_email/verify.md) : `GET /api/email/verify/{id}/{hash}`
+- [確認メール再送信](readme/apis/verify_email/resend.md) : `POST /api/email/resend`
 
 
 ### ユーザーデータ取得
