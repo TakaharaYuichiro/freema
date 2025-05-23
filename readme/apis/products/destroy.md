@@ -1,10 +1,10 @@
-# Userデータ削除
+# Productデータ削除
 
-登録済みUserデータに対して、idを指定してデータを削除します。
+登録済みProductデータに対して、`id` を指定してデータを削除します。
 
 ---
 
-**URL** : `/api/user/{id}/`
+**URL** : `/api/products/{id}`
 
 **メソッド** : `DELETE`
 

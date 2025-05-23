@@ -4,7 +4,7 @@
 
 ---
 
-**URL** : `/api/user/`
+**URL** : `/api/users`
 
 **メソッド** : `GET`
 

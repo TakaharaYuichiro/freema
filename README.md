@@ -301,31 +301,51 @@ DBに会員情報を登録します。なお、この処理では「仮登録」
 
 Userデータの取得や登録などの操作をするためのエンドポイントです。
 
-- [全てのデータ取得](readme/apis/user/index.md) : `GET /api/user/`
-- [データ登録](readme/apis/user/store.md) : `POST /api/user/`
-- [データ取得](readme/apis/user/show.md) : `GET /api/user/{id}/`
-- [データ更新](readme/apis/user/update.md) : `PUT /api/user/{id}/`
-- [データ削除](readme/apis/user/destroy.md) : `DELETE /api/user/{id}/`
+- [全てのデータ取得](readme/apis/users/index.md) : `GET /api/users`
+- [データ登録](readme/apis/users/store.md) : `POST /api/users`
+- [データ取得](readme/apis/users/show.md) : `GET /api/users/{id}`
+- [データ更新](readme/apis/users/update.md) : `PUT /api/users/{id}`
+- [データ削除](readme/apis/users/destroy.md) : `DELETE /api/users/{id}`
 
-### ToDoデータ操作
+### 商品データ処理
 
-ToDoデータの取得や登録などの操作をするためのエンドポイントです。
+Productデータの取得や登録などの操作をするためのエンドポイントです。
 
-- [全てのデータ取得](readme/apis/todo/index.md) : `GET /api/todo/`
-- [データ登録](readme/apis/todo/store.md) : `POST /api/todo/`
-- [データ取得](readme/apis/todo/show.md) : `GET /api/todo/{id}/`
-- [データ更新](readme/apis/todo/update.md) : `PUT /api/todo/{id}/`
-- [データ削除](readme/apis/todo/destroy.md) : `DELETE /api/todo/{id}/`
+- [全てのデータ取得](readme/apis/products/index.md) : `GET /api/products`
+- [データ登録](readme/apis/products/store.md) : `POST /api/products`
+- [データ取得](readme/apis/products/show.md) : `GET /api/products/{id}`
+- [データ更新](readme/apis/products/update.md) : `PUT /api/products/{id}`
+- [データ削除](readme/apis/products/destroy.md) : `DELETE /api/products/{id}`
 
-### Categoryデータ操作
+### 商品購入データ処理
+
+Purchaseデータの取得や登録などの操作をするためのエンドポイントです。
+
+- [全てのデータ取得](readme/apis/purchases/index.md) : `GET /api/purchases`
+- [データ登録](readme/apis/purchases/store.md) : `POST /api/purchases`
+- [データ取得](readme/apis/purchases/show.md) : `GET /api/purchases/{id}`
+- [データ更新](readme/apis/purchases/update.md) : `PUT /api/purchases/{id}`
+- [データ削除](readme/apis/purchases/destroy.md) : `DELETE /api/purchases/{id}`
+
+### カテゴリデータ処理
 
 Categoryデータの取得や登録などの操作をするためのエンドポイントです。
 
-- [全てのデータ取得](readme/apis/category/index.md) : `GET /api/category/`
-- [データ登録](readme/apis/category/store.md) : `POST /api/category/`
-- [データ取得](readme/apis/category/show.md) : `GET /api/category/{id}/`
-- [データ更新](readme/apis/category/update.md) : `PUT /api/category/{id}/`
-- [データ削除](readme/apis/category/destroy.md) : `DELETE /api/category/{id}/`
+- [全てのデータ取得](readme/apis/categories/index.md) : `GET /api/categories`
+- [データ登録](readme/apis/categories/store.md) : `POST /api/categories`
+- [データ取得](readme/apis/categories/show.md) : `GET /api/categories/{id}`
+- [データ更新](readme/apis/categories/update.md) : `PUT /api/categories/{id}`
+- [データ削除](readme/apis/categories/destroy.md) : `DELETE /api/categories/{id}`
+
+### 評価(コメント)データ処理
+
+Evaluationデータの取得や登録などの操作をするためのエンドポイントです。
+
+- [全てのデータ取得](readme/apis/evaluations/index.md) : `GET /api/evaluations`
+- [データ登録](readme/apis/evaluations/store.md) : `POST /api/evaluations`
+- [データ取得](readme/apis/evaluations/show.md) : `GET /api/evaluations/{id}`
+- [データ更新](readme/apis/evaluations/update.md) : `PUT /api/evaluations/{id}`
+- [データ削除](readme/apis/evaluations/destroy.md) : `DELETE /api/evaluations/{id}`
 
 ## テーブル設計
 

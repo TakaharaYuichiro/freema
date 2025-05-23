@@ -1,10 +1,10 @@
-# Userデータ登録
+# Categoryデータ登録
 
-新しいUserデータを登録します。
+新しいCategoryデータを登録します。
 
 ---
 
-**URL** : `/api/user/`
+**URL** : `/api/categories`
 
 **メソッド** : `POST`
 
@@ -16,13 +16,9 @@
 
 ```json
 {
-  "name" : "テストユーザー1",
-  "email" : "test1@test.com",
-  "password" : "password",
-  "zipcode" : "123-4567",
-  "address" : "東京都新宿区1-1-1",
-  "building" : "テストビル101",
+  "name": "ファッション"
 }
+
 ```
 
 **ヘッダー制約** : `Authorization: Bearer {token}`  

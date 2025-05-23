@@ -1,10 +1,10 @@
 # Userデータ更新
 
-登録済みUserデータに対して、idを指定してデータを更新します。
+登録済みUserデータに対して、指定した `id` に基づいて更新します。
 
 ---
 
-**URL** : `/api/user/{id}/`
+**URL** : `/api/users/{id}`
 
 **メソッド** : `PUT`
 
@@ -21,7 +21,7 @@
   "password" : "password",
   "zipcode" : "123-4567",
   "address" : "東京都新宿区1-1-1",
-  "building" : "テストビル101",
+  "building" : "テストビル101"
 }
 ```
 
