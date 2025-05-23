@@ -5,10 +5,15 @@
 ---
 
 **URL** : `/api/email/resend`
+
 **メソッド** : `POST`
+
 **認証** : 必須（`auth:sanctum`）
+
 **権限** : 不要
+
 **データ制約** : なし
+
 **ヘッダー制約** : `Authorization: Bearer {token}`  
 
 ---
