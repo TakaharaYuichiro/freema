@@ -16,7 +16,6 @@
 
 ```json
 {
-  "user_id": 1,
   "product_id": 1,
   "comment": "商品へのコメントや評価など",
 }

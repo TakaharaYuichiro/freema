@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Evaluation;
 use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Log;
 
 class EvaluationController extends Controller
 {
@@ -50,7 +51,13 @@ class EvaluationController extends Controller
   public function store(Request $request)
   {
     try {
-      $item = Evaluation::create($request->all());
+      $data = [
+        'user_id' =>  $request->user()->id,
+        'product_id' => $request->product_id,
+        'comment' => $request->comment,
+      ];
+      $item = Evaluation::create($data);
+      // $item = Evaluation::create($request->all());
       return response()->json([
         'data' => $item
       ], 201);

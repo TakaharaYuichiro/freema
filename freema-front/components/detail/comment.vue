@@ -92,7 +92,6 @@ const submitComment = async () => {
 
   try {
     const resp = await post('/evaluations', {
-      user_id: auth.user.id,
       product_id: props.product_id,
       comment: newComment.value,
     });
