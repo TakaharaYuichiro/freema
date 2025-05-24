@@ -244,8 +244,6 @@ select {
 
   .header__user__button-container {
     justify-content: start;
-
   }
 }
-
 </style>

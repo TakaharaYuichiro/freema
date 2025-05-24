@@ -17,9 +17,15 @@
         <button class="switching-section__switch-button" :style="{ color: (mode === 0) ? 'red' : 'gray' }"
           @click="switchMode(0)">出品した商品</button>
         <button class="switching-section__switch-button" :style="{ color: (mode === 1) ? 'red' : 'gray' }"
-          @click="switchMode(1)" data-testid="switching-button1">購入した商品<br>(支払完了)</button>
+          @click="switchMode(1)" data-testid="switching-button1">
+          <div>購入した商品</div>
+          <div>(支払完了)</div>
+        </button>
         <button class="switching-section__switch-button" :style="{ color: (mode === 2) ? 'red' : 'gray' }"
-          @click="switchMode(2)">購入した商品<br>(支払確認待ち)</button>
+          @click="switchMode(2)">
+          <div>購入した商品</div>
+          <div>(支払確認待ち)</div>
+        </button>
       </div>
     </div>
 
@@ -310,7 +316,6 @@ onMounted(async () => {
 
 .switching-section__switch-button:hover {
   background: #FFCCCC;
-  ;
 }
 
 .panel-section {
@@ -369,5 +374,22 @@ onMounted(async () => {
 .slide-right-leave-to {
   transform: translateX(100%);
   opacity: 0;
+}
+
+@media screen and (max-width: 480px) {
+  .switching-section__switch-button-container {
+    gap: 3px;
+    margin-left: 0px;
+    flex-flow: column;
+  }
+
+  .switching-section__switch-button {
+    width: auto;
+    height: 25px;
+    text-align: left;
+    padding: 2px 8px;
+    display: flex;
+    white-space: nowrap;
+  }
 }
 </style>
