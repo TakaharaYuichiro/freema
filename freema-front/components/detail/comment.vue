@@ -250,6 +250,8 @@ onMounted(async () => {
   overflow-y: scroll;
   overflow-x: hidden;
   overflow-wrap: break-word;
+
+  white-space: pre-wrap;
 }
 
 .comment-header__icon__container {

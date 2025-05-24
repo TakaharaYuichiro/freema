@@ -26,7 +26,7 @@
 
       <div class="group">
         <div class="group-title">商品説明</div>
-        <div data-testid="product-item--content">
+        <div class="info-section__content" data-testid="product-item--content">
           <span>{{ product.content }}</span>
         </div>
       </div>
@@ -211,16 +211,15 @@ onMounted(async () => {
 .info-section__price__after {
   font-size: medium;
   margin: auto 0 0;
-
-  border: 0px solid red;
-
 }
 
 .info-section__price__value {
   font-size: x-large;
   margin: auto 3px 0;
+}
 
-  border: 0px solid red;
+.info-section__content {
+  white-space: pre-wrap;
 }
 
 .button-contaienr {

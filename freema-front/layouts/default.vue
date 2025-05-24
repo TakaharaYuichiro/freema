@@ -201,7 +201,7 @@ select {
 /* =================================== */
 /* レスポンシブデザイン対応 */
 /* =================================== */
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 768px) {
   .header__inner {
     display: block;
     justify-content: space-between;
@@ -222,7 +222,7 @@ select {
     white-space: nowrap;
     width: auto;
     height: 25px;
-    padding-left: 10px;
+    padding-left: 18px;
     display: flex;
     align-items: center;
   }
@@ -235,4 +235,17 @@ select {
     padding-right: 0px;
   }
 }
+
+@media screen and (max-width: 480px) {
+  .header__user {
+    flex-flow: column;
+    height: 60px;
+  }
+
+  .header__user__button-container {
+    justify-content: start;
+
+  }
+}
+
 </style>
