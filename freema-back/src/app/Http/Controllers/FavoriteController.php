@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Favorite;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class FavoriteController extends Controller
 {
@@ -40,7 +41,8 @@ class FavoriteController extends Controller
 
   public function invertFavorite(Request $request)
   {
-    $target = Favorite::where('user_id', $request->user_id)->where('product_id', $request->product_id)->first();
+    $user_id = $request->user()->id;
+    $target = Favorite::where('user_id', $user_id)->where('product_id', $request->product_id)->first();
     if ($target) {
       // レコードがある(すでにいいねになっていいる)ときは、このレコードを削除(いいねを取り消す)
       $target->delete();
@@ -49,7 +51,7 @@ class FavoriteController extends Controller
       ], 201);
     } else {
       // レコードがない(いいねをしていない)ときは、レコードを作成(いいねする)
-      $data = ['user_id' => $request->user_id, 'product_id' => $request->product_id];
+      $data = ['user_id' => $user_id, 'product_id' => $request->product_id];
       Favorite::create($data);
       return response()->json([
         'is_favorite' => true

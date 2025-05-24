@@ -195,10 +195,8 @@ watch(() => search.triggerSearch, () => {
 })
 
 const toggleFavorite = async (product_id: number) => {
-  const user_id = auth.user.id;
   try {
     const respState = await post("/invert-favorite", {
-      'user_id': user_id,
       'product_id': product_id
     })
 

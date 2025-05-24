@@ -118,7 +118,6 @@ const toggleFavorite = async (product_id: number) => {
   try {
     // この商品のいいねをサーバーでチェックしオンならオフに、オフならオンにする。変更後のいいね状態をrespStateで受ける。
     const respState = await post("/invert-favorite", {
-      'user_id': auth.user.id,
       'product_id': product_id
     })
 

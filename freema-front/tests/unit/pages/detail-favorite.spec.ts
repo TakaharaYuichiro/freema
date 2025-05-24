@@ -12,6 +12,7 @@ const clonedFavorites = structuredClone(mockFavorites);   // mockFavoritesに破
 
 // テスト条件
 const targetProductId = 1;
+const targetUserId = 1;
 
 // useRuntimeConfigをモック
 import { IMAGE_URL_BASE } from '~/tests/utils/constants'
@@ -47,15 +48,15 @@ vi.mock('~/composables/useAuth', () => ({
     post: vi.fn().mockImplementation((url: string, payload: any) => {
       if (url === `/invert-favorite`) {
         let is_favorite = false;
-        const { user_id, product_id } = payload;
-        const targetIndex = clonedFavorites.findIndex(item => item.product_id == product_id && item.user_id == user_id);
+        const { product_id } = payload;
+        const targetIndex = clonedFavorites.findIndex(item => item.product_id == product_id && item.user_id == targetUserId);
         if (targetIndex !== -1) {
           // すでにいいねされていたら、いいねを削除
           clonedFavorites.splice(targetIndex, 1);
           is_favorite = false;
         } else {
           // まだいいねされていなければ、いいねを追加
-          clonedFavorites.push({ id: 1, product_id: product_id, user_id: user_id });
+          clonedFavorites.push({ id: 1, product_id: product_id, user_id: targetUserId });
           is_favorite = true;
         }
         return Promise.resolve({ is_favorite: is_favorite });
@@ -79,9 +80,6 @@ vi.mock('vue-router', () => ({
 describe('8. いいね機能', () => {
 
   it('8-1. いいねアイコンを押下することによって、いいねした商品として登録することができる、8-2. 追加済みのアイコンは色が変化する', async () => {
-    // テスト対象のユーザーID
-    const targetUserId = 1;
-
     // 期待される結果
     const favorites = clonedFavorites.filter(item => item.product_id === targetProductId);
     const favoriteCountBeforeFireEvent = favorites?.length;
@@ -125,9 +123,6 @@ describe('8. いいね機能', () => {
   })
 
   it('8-3. 再度いいねアイコンを押下することによって、いいねを解除することができる', async () => {
-    // テスト対象のユーザーID
-    const targetUserId = 1;
-
     // 期待される結果
     const favorites = clonedFavorites.filter(item => item.product_id === targetProductId);
     const favoriteCountBeforeFireEvent = favorites?.length;

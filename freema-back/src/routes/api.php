@@ -47,7 +47,7 @@ Route::post('/category-products', [CategoryProductController::class, 'store'])->
 Route::get('/get-favorites', [FavoriteController::class, 'getFavorites'])->middleware('auth:sanctum');
 Route::get('/get-favorites/{product_id}', [FavoriteController::class, 'showFavorites'])->middleware('auth:sanctum');
 Route::get('/count-favorites/{product_id}', [FavoriteController::class, 'countFavorites']);
-Route::post('/invert-favorite', [FavoriteController::class, 'invertFavorite']);
+Route::post('/invert-favorite', [FavoriteController::class, 'invertFavorite'])->middleware('auth:sanctum');
 
 Route::post('/upload-image', [ImageUploadController::class, 'upload'])->middleware('auth:sanctum');
 
