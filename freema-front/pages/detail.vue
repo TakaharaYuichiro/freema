@@ -187,7 +187,7 @@ onMounted(async () => {
 .info-section {
   padding: 15px;
   width: 100%;
-  max-width: 500px;
+  max-width: 750px;
   box-sizing: border-box;
 }
 
@@ -286,7 +286,7 @@ onMounted(async () => {
   vertical-align: bottom;
 }
 
-@media screen and (max-width: 580px) {
+@media screen and (max-width: 768px) {
   .main-content {
     display: block;
   }
