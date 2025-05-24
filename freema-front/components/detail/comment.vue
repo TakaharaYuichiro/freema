@@ -58,7 +58,8 @@ const evaluations = ref<Evaluation[]>([]);
 const { meta } = useForm<CommentFormValues>({ validationSchema: commentSchema });
 const isFormValid = computed(() => meta.value.valid);
 
-const { value: newComment, errorMessage: errorsComment, meta: metaComment } = useField<string>('comment');
+// const { value: newComment, errorMessage: errorsComment, meta: metaComment } = useField<string>('comment');
+const { value: newComment, errorMessage: errorsComment, meta: metaComment, resetField } = useField<string>('comment');
 
 const readEvaluations = async () => {
   try {
@@ -96,7 +97,7 @@ const submitComment = async () => {
       comment: newComment.value,
     });
     await readEvaluations();
-    newComment.value = '';
+    resetField({ value: '' });
   } catch (err) {
     console.error('コメント送信失敗', err);
     alert('コメント送信に失敗しました');
