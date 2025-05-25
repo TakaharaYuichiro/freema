@@ -17,7 +17,6 @@
 ```json
 {
   "product_id" : 1,
-  "user_id" : 1,
   "zipcode" : "123-4567",
   "address" : "東京都新宿区1-1-1",
   "building" : "テストビル101",
