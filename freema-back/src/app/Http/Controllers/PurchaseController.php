@@ -46,7 +46,9 @@ class PurchaseController extends Controller
   public function store(Request $request)
   {
     try {
-      $item = Purchase::create($request->all());
+      $data = $request->all();
+      $data += ['user_id' =>  $request->user()->id];
+      $item = Purchase::create($data);
       return response()->json([
         'data' => $item
       ], 201);

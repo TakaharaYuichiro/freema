@@ -74,6 +74,7 @@ vi.mock('~/composables/useAuth', () => ({
           purchase.product = product;
         }
         purchase.paid_at = "2025-01-01 10:00:00";
+        purchase.user_id = targetUserId;
         mockPurchases.push(purchase);
         return Promise.resolve({ data: { id: 1 } });
       }

@@ -276,7 +276,6 @@ const uploadData = async () => {
 
     const buffPurchase = {
       product_id: product_id,
-      user_id: auth.user.id,
       zipcode: zipcode.value,
       address: address.value,
       to_name: to_name.value,
