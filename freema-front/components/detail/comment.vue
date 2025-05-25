@@ -110,7 +110,8 @@ const deleteComment = async (id: number) => {
   try {
     await del(`/evaluations/${id}`);
     await readEvaluations();
-    newComment.value = '';
+    // newComment.value = '';
+    resetField({ value: '' });
   } catch (err) {
     console.error('コメント削除失敗', err);
     alert('コメントを削除できませんでした');
