@@ -63,7 +63,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import useAuth from '~/composables/useAuth';
 import { useAuthStore } from "@/stores/auth";
 import { useField, useForm } from 'vee-validate';
@@ -73,8 +73,12 @@ import type { ProfileFormValues } from '@/composables/validations/profileSchema'
 typeof definePageMeta === 'function' && definePageMeta({ middleware: 'auth' }); // テスト時には飛ばす
 
 const router = useRouter();
+const route = useRoute();
 const { get, post, put } = useAuth();
 const auth = useAuthStore();
+
+const option = route.query.option || 'new';
+console.log('option: ', option);
 
 const { setValues, meta } = useForm<ProfileFormValues>({
   validationSchema: profileSchema,
@@ -179,7 +183,11 @@ const uploadData = async () => {
     const respUser = await put(`/users/${auth.user.id}`, buffUser);
     if (respUser) {
       auth.updateUser(buffUser);  // localStrageをアップデート
-      router.push('/');
+      if (option === 'update') {
+        router.push('/mypage');
+      } else {
+        router.push('/');
+      }
     } else {
       throw new Error("APIエラー");
     }

@@ -82,7 +82,7 @@ const imageSrc = computed(() => {
 });
 
 const handleProfile = () => {
-  router.push("/profile");
+  router.push("/profile?option=update");
 }
 
 const mode = ref(0);
