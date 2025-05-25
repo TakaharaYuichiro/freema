@@ -108,29 +108,26 @@ class ProductController extends Controller
     }
   }
 
-  /**
-   * Remove the specified resource from storage.
-   *
-   * @param  \App\Models\Prodcut  $product
-   * @return \Illuminate\Http\Response
-   */
-  public function destroy(Product $product)
+  public function destroy(Request $request, Product $product)
   {
     try {
-      $item = Product::where('id', $product->id)->delete();
-      if ($item) {
+      // 所有者チェック
+      if ($product->user_id !== $request->user()->id) {
         return response()->json([
-          'success' => true,
-          'message' => 'Deleted successfully',
-        ], 200);
-      } else {
-        return response()->json([
-          'message' => 'Not found',
-        ], 404);
+          'success' => false,
+          'message' => 'Unauthorized',
+        ], 403);
       }
+
+      $product->delete();
+
+      return response()->json([
+        'success' => true,
+        'message' => 'Deleted successfully',
+      ], 200);
     } catch (Exception $err) {
       return response()->json([
-        'error' => $err,
+        'error' => $err->getMessage(),
       ], 400);
     }
   }

@@ -124,22 +124,26 @@ class EvaluationController extends Controller
    * @param  \App\Models\Evaluation  $evaluation
    * @return \Illuminate\Http\Response
    */
-  public function destroy(Evaluation $evaluation)
+  public function destroy(Request $request, Evaluation $evaluation)
   {
     try {
-      $item = Evaluation::where('id', $evaluation->id)->delete();
-      if ($item) {
+      // 所有者チェック
+      if ($evaluation->user_id !== $request->user()->id) {
         return response()->json([
-          'message' => 'Deleted successfully',
-        ], 200);
-      } else {
-        return response()->json([
-          'message' => 'Not found',
-        ], 404);
+          'success' => false,
+          'message' => 'Unauthorized',
+        ], 403);
       }
+
+      $evaluation->delete();
+
+      return response()->json([
+        'success' => true,
+        'message' => 'Deleted successfully',
+      ], 200);
     } catch (Exception $err) {
       return response()->json([
-        'error' => $err,
+        'error' => $err->getMessage(),
       ], 400);
     }
   }
