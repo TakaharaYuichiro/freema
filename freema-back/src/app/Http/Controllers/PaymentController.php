@@ -36,22 +36,19 @@ class PaymentController extends Controller
         'success' => true
       ], 200);
     } catch (CardException $e) {
-      Log::debug('CardException');
+      Log::debug('CardException'. $e->getMessage());
       return response()->json([
-        'error' => $e->getMessage(),
-        'message' => '決済に失敗しました'
+        'error' => '決済に失敗しました。他のカードをお試しください。'
       ], 400);
     } catch (InvalidRequestException $e) {
       Log::debug('InvalidRequestException '. $e->getMessage());
       return response()->json([
-        'error' => $e->getMessage(),
-        'message' => '決済に失敗しました'
+        'error' => '決済に失敗しました。'
       ], 400);
     } catch (Exception $e) {
-      Log::debug('Other Exception');
+      Log::debug('Other Exception'. $e->getMessage());
       return response()->json([
-        'error' => $e->getMessage(),
-        'message' => '決済に失敗しました'
+        'error' => '決済に失敗しました。'
       ], 400);
     }
   }

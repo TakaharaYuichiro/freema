@@ -18,7 +18,8 @@
     <div id="card-errors" class="text-danger">{{ error }}</div>
 
     <div class="button-container">
-      <button @click="handleSubmit">お支払い</button>
+      <button class="button button--cancel" @click="handleCancel">キャンセル</button>
+      <button class="button" @click="handleSubmit">お支払い</button>
     </div>
   </div>
 </template>
@@ -32,16 +33,16 @@ import { useRouter } from "vue-router";
 const props = defineProps<{
   purchaseId: number
   totalPrice: number
-}>()
+}>();
 
 const { post } = useAuth();
 const router = useRouter();
 
-const error = ref('')
-let stripe: any = null
-let cardNumber: any = null
-let cardExpiry: any = null
-let cardCvc: any = null
+const error = ref('');
+let stripe: any = null;
+let cardNumber: any = null;
+let cardExpiry: any = null;
+let cardCvc: any = null;
 
 onMounted(async () => {
   const stripePublicKey = useRuntimeConfig().public.stripePublicKey;
@@ -64,13 +65,14 @@ onMounted(async () => {
   cardNumber.on('change', updateError)
   cardExpiry.on('change', updateError)
   cardCvc.on('change', updateError)
-})
+});
 
 const handleSubmit = async () => {
+  error.value = '';
   const result = await stripe.createToken(cardNumber)
   if (result.error) {
-    error.value = result.error.message
-    return
+    error.value = result.error.message;
+    return;
   }
 
   try {
@@ -84,14 +86,16 @@ const handleSubmit = async () => {
       router.push('/mypage?mode=1');
       return;
     } else {
-      throw new Error(resp.error);
+      throw new Error(resp.error || '決済に失敗しました。');
     }
-  } catch (err) {
-    const msg = '決済に失敗しました。';
-    alert(msg);
-  }
+  } catch (e: any) {
+    error.value = e.response?.data?.error || '決済に失敗しました'
+  } 
+};
+
+const handleCancel = async () => {
   router.push('/mypage?mode=2');
-}
+};
 </script>
 
 <style scoped>
@@ -126,21 +130,35 @@ const handleSubmit = async () => {
   margin-top: 20px;
 }
 
-.button-container button {
-  width: 80px;
-  height: 30px;
+.button {
+  width: 140px;
+  height: 35px;
   margin-left: 10px;
   border: none;
-  border-radius: 10%;
+  border-radius: 3px;
   background: #305DFF;
   color: #fff;
   cursor: pointer;
-  font-size: 0.8rem;
+  font-size: 1rem;
 }
 
-.button-container button:hover {
+.button:hover {
   background: #e5af9d;
   color: #000;
   cursor: pointer;
+}
+
+.button:disabled {
+  background: #aaa;
+  color: #fff;
+  cursor: not-allowed;
+}
+
+.button--cancel {
+  background: transparent;
+  color: #333;
+  border: 1px solid #666;
+  font-size: 0.9rem;
+  width: 100px;
 }
 </style>
