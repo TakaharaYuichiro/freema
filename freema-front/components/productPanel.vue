@@ -15,7 +15,7 @@
           <div class="content__description">{{ product.content }}</div>
           <div class="content__button">
             <button class="content__button--show-detail" type="button" @click="showDetail(product.id)">詳しく見る</button>
-            <button v-if="product.user_id === auth.user?.id" class="content__button--show-detail" type="button"
+            <button v-if="product.user_id === auth.user?.id" class="content__button--show-detail content__button--cancell-sell" type="button"
               @click="cancelSell(product.id)">出品取消</button>
             <div class="content__button--favorite__container">
               <button class="content__button--favorite" type="button" @click="toggleFavorite(product.id)">
@@ -199,6 +199,13 @@ const cancelSell = async (product_id: number) => {
 
 .content__button--show-detail:hover {
   background: #c7c0ba;
+}
+
+.content__button--cancell-sell {
+  border: 1px solid #666;
+  color: #333;
+  background: transparent;
+  width: 80px;
 }
 
 .content__button--favorite {
