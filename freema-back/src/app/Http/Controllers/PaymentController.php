@@ -59,9 +59,15 @@ class PaymentController extends Controller
   // Stripeコンビニ払いのAPI用メソッド
   public function konbiniPayment(Request $request)
   {
-    if ($request->total_price < 120) {
+    if ($request->total_price < 120 || $request->total_price > 300000) {
+      // return response()->json([
+      //   'status' => 'error',
+      //   'message' => 'コンビニ決済は120円以上、300,000円以下でご利用ください。',
+      // ], 400);
+
+
       return response()->json([
-          'error' => 'コンビニ払いは120円以上から利用可能です。',
+        'error' => 'コンビニ決済は120円以上、300,000円以下でご利用ください。',
       ], 400);
     }
 
@@ -114,6 +120,8 @@ class PaymentController extends Controller
       ], 400);
     }
   }
+
+
 
   // 【デモ用】ユーザーがブラウザ上で完了をクリックすることで、コンビニ払いを完了したことにするためのAPI用メソッド
   public function konbiniPaymentComplete(Request $request)

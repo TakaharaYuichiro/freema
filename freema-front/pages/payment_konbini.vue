@@ -22,7 +22,7 @@
         <button class="button button--cancel" @click="handleCancel">キャンセル</button>
         <button class="button" :disabled="!paymentInfo" @click="handleSubmit">支払いを完了して戻る</button>
       </div>
-      <div v-if="error">{{ error }}</div>
+      <div class="error-message" v-if="error">{{ error }}</div>
     </div>
   </div>
 </template>
@@ -83,7 +83,7 @@ const konbiniPayment = async () => {
       error.value = '支払い情報を取得できませんでした';
     }
   } catch (e: any) {
-    error.value = e.data?.error || '支払いに失敗しました'
+    error.value = e.response?.data?.error || 'コンビニ決済に失敗しました'
   }
 }
 
@@ -214,7 +214,8 @@ onMounted(async () => {
   border: 1px solid #666;
 }
 
-.error {
+.error-message {
+  padding: 15px;
   color: red;
 }
 </style>
