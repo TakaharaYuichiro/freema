@@ -46,7 +46,6 @@ class EvaluationController extends Controller
         'comment' => $request->comment,
       ];
       $item = Evaluation::create($data);
-      // $item = Evaluation::create($request->all());
       return response()->json([
         'data' => $item
       ], 201);

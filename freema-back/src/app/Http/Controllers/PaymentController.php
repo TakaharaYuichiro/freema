@@ -115,8 +115,6 @@ class PaymentController extends Controller
     }
   }
 
-
-
   // 【デモ用】ユーザーがブラウザ上で完了をクリックすることで、コンビニ払いを完了したことにするためのAPI用メソッド
   public function konbiniPaymentComplete(Request $request)
   {
