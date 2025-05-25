@@ -24,15 +24,15 @@
           </div>
 
           <div class="group">
-            <div>購入日： {{ formatDate(purchase.created_at) }}</div>
+            <div>購入日時： {{ formatDate(purchase.created_at) }}</div>
             <div>支払方法： {{ getPaymentMethodText(purchase.method_index) }}</div>
-            <div>送付先： <span data-testid="sendto-text">{{ getSendtoText(purchase) }}</span></div>
+            <div>送付先　： <span data-testid="sendto-text">{{ getSendtoText(purchase) }}</span></div>
           </div>
 
           <div class="group">
             <div class="content__product--name" data-testid="purchased-product-name">{{ purchase.product.name }}</div>
             <div class="content__product--price">{{ purchase.product.price.toLocaleString() }}</div>
-            <button class="content__button" type="button" @click="showDetail(purchase.product.id)">商品詳細</button>
+            <button class="content__button content__button--detail" type="button" @click="showDetail(purchase.product.id)">商品詳細</button>
           </div>
         </div>
       </div>
@@ -152,6 +152,7 @@ const onImageError = (event: Event) => {
   display: flex;
   align-items: center;
   width: 100%;
+  padding: 2px 5px;
 }
 
 .content__button {
@@ -169,10 +170,14 @@ const onImageError = (event: Event) => {
   font-weight: 600;
 }
 
+.content__button--detail {
+  color: #333;
+  font-weight: 500;
+}
+
 .content__button:hover {
   color: #aaf;
 }
-
 
 .content__product {
   display: flex;
@@ -188,6 +193,7 @@ const onImageError = (event: Event) => {
   color: black;
   font-weight: bold;
   font-size: larger;
+  padding: 2px 0;
 }
 
 .content__product--price {
