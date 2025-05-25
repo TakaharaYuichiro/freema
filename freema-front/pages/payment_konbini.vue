@@ -19,7 +19,8 @@
         </div>
       </div>
       <div class="button-container">
-        <button class="button" @click="handleSubmit">支払いを完了して戻る</button>
+        <button class="button button--cancel" @click="handleCancel">キャンセル</button>
+        <button class="button" :disabled="!paymentInfo" @click="handleSubmit">支払いを完了して戻る</button>
       </div>
       <div v-if="error">{{ error }}</div>
     </div>
@@ -104,6 +105,10 @@ const handleSubmit = async () => {
     console.error('APIアクセスエラー');
     alert('エラーが発生し、支払いを完了できませんでした');
   }
+  router.push('/mypage?mode=2');
+};
+
+const handleCancel = async () => {
   router.push('/mypage?mode=2');
 };
 
@@ -195,6 +200,18 @@ onMounted(async () => {
   background: #e5af9d;
   color: #000;
   cursor: pointer;
+}
+
+.button:disabled {
+  background: #aaa;
+  color: #fff;
+  cursor: not-allowed;
+}
+
+.button--cancel {
+  background: transparent;
+  color: #333;
+  border: 1px solid #666;
 }
 
 .error {
