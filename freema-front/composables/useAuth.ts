@@ -77,6 +77,7 @@ export default function useAuth() {
       return response.data;
     } catch (e) {
       handleError(e);
+      throw e; 
     }
   };
 
@@ -85,8 +86,8 @@ export default function useAuth() {
       const response = await api.post(url, data);
       return response.data;
     } catch (e) {
-      handleError(e); // ログなど必要なら残す
-      throw e; // ←★ これが重要！
+      handleError(e); 
+      throw e; 
     }
   };
 
@@ -96,6 +97,7 @@ export default function useAuth() {
       return response.data;
     } catch (e) {
       handleError(e);
+      throw e; 
     }
   };
 
@@ -105,6 +107,7 @@ export default function useAuth() {
       return response.data;
     } catch (e) {
       handleError(e);
+      throw e; 
     }
   };
 
