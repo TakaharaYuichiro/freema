@@ -10,7 +10,7 @@
         <div class="content">
           <div v-if="!purchase.paid_at" class="group">
             <div class="content__payment-status">
-              <span>お支払いが未済です</span>
+              <div class="content__payment-status--text">お支払いが未済です</div>
             </div>
             <template v-if="purchase.method_index === 1">
               <button class="content__button content__button--payment"
@@ -129,7 +129,7 @@ const onImageError = (event: Event) => {
 
 .content {
   grid-column: 2;
-  margin: 0 10px;
+  margin-left: 20px;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -147,12 +147,13 @@ const onImageError = (event: Event) => {
 
 .content__payment-status {
   background: #FFE0E0;
-  font-size: larger;
   height: 30px;
-  display: flex;
-  align-items: center;
   width: 100%;
+}
+
+.content__payment-status--text {
   padding: 2px 5px;
+  font-size: larger;
 }
 
 .content__button {
@@ -256,5 +257,16 @@ const onImageError = (event: Event) => {
 .content__button--favorite__counter {
   font-size: smaller;
   color: #666;
+}
+
+@media screen and (max-width: 600px) {
+  .item {
+    display:block;
+  }
+
+  .content {
+    margin-top: 10px;
+    margin-left: 0;
+  }
 }
 </style>
