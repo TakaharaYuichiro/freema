@@ -67,8 +67,6 @@ class PurchaseController extends Controller
    */
   public function show($id)
   {
-    // Log::debug('PurchaseController');
-    // Log::debug($id);
     $item = Purchase::with('product')->find($id);
     if ($item) {
       return response()->json([
