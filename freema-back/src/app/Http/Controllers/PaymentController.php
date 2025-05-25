@@ -60,12 +60,6 @@ class PaymentController extends Controller
   public function konbiniPayment(Request $request)
   {
     if ($request->total_price < 120 || $request->total_price > 300000) {
-      // return response()->json([
-      //   'status' => 'error',
-      //   'message' => 'コンビニ決済は120円以上、300,000円以下でご利用ください。',
-      // ], 400);
-
-
       return response()->json([
         'error' => 'コンビニ決済は120円以上、300,000円以下でご利用ください。',
       ], 400);

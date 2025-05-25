@@ -80,14 +80,6 @@ export default function useAuth() {
     }
   };
 
-  // const post = async (url: string, data?: any) => {
-  //   try {
-  //     const response = await api.post(url, data);
-  //     return response.data;
-  //   } catch (e) {
-  //     handleError(e);
-  //   }
-  // };
   const post = async (url: string, data?: any) => {
     try {
       const response = await api.post(url, data);
