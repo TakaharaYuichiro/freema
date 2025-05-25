@@ -55,8 +55,7 @@ const products = ref<ProductExp[]>([]);
 const favoriteProducts = ref<ProductExp[]>([]);
 const readProducts = async () => {
   try {
-    const url = '/products';
-    const resp = await get(url);
+    const resp = await get('/products');
 
     allProducts.value = resp.data.map((datum: Product) => ({
       id: datum.id,

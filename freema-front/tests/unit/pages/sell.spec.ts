@@ -49,7 +49,22 @@ vi.mock('~/composables/useAuth', () => ({
     }),
 
     post: vi.fn().mockImplementation((url: string, payload: any) => {
-      if (url === `/products`) mockProductsLocal.push(payload);
+      if (url === `/products`) {
+        const buffProduct:Product = {
+          id: 11,
+          user_id: targetUserId,
+          name: payload.name,
+          brand: payload.brand, 
+          price: payload.price,
+          content: payload.content,
+          img_filename: payload.img_filename,
+          condition_index: payload.condition_index,
+          categories: [],
+          favorites_count: 0,
+          purchases_exists: false,
+        };
+        mockProductsLocal.push(buffProduct);
+      }
       return Promise.resolve({ data: {} });
     })
   })

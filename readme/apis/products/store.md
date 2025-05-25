@@ -16,7 +16,6 @@
 
 ```json
 {
-  "user_id": 2,
   "name": "腕時計",
   "brand": "",
   "price": 15000,

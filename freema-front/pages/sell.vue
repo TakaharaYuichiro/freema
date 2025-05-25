@@ -206,7 +206,6 @@ const submitData = async () => {
   // 商品データのアップロード
   try {
     const buffProducts = {
-      user_id: auth.user.id,
       name: productName.value,
       brand: productBrand.value,
       price: productPrice.value,
