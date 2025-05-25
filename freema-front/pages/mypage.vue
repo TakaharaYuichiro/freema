@@ -180,20 +180,27 @@ const updateSearchPurchases = () => {
   const keywords = search.keyword
     .toLowerCase()
     .split(' ')
-    .filter(kw => kw.trim() !== '') // 空文字除去
+    .filter(kw => kw.trim() !== ''); // 空文字除去
 
   const buffPurchases = purchases.value.filter(purchase => {
     const matchesKeywords = keywords.every(kw =>
       purchase.product.name.toLowerCase().includes(kw) ||
       purchase.product.brand?.toLowerCase().includes(kw) ||
       purchase.product.content?.toLowerCase().includes(kw)
-    )
+    );
     return matchesKeywords;
-  })
+  });
 
-  completedPurchases.value = buffPurchases.filter(purchase => purchase.paid_at);
-  unfinishedPuchases.value = buffPurchases.filter(purchase => !purchase.paid_at);
-}
+  // completed: 降順（新しい順）
+  completedPurchases.value = buffPurchases
+    .filter(purchase => purchase.paid_at)
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+  // unfinished: 昇順（古い順）
+  unfinishedPuchases.value = buffPurchases
+    .filter(purchase => !purchase.paid_at)
+    .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+};
 
 watch(() => search.triggerSearch, () => {
   updateSearchProducts();
