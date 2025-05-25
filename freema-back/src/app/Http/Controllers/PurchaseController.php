@@ -9,11 +9,6 @@ use Illuminate\Support\Facades\Log;
 
 class PurchaseController extends Controller
 {
-  /**
-   * Display a listing of the resource.
-   *
-   * @return \Illuminate\Http\Response
-   */
   public function index(Request $request)
   {
     if ($request->query() == null) {
@@ -37,12 +32,6 @@ class PurchaseController extends Controller
     }
   }
 
-  /**
-   * Store a newly created resource in storage.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   * @return \Illuminate\Http\Response
-   */
   public function store(Request $request)
   {
     try {
@@ -59,12 +48,6 @@ class PurchaseController extends Controller
     }
   }
 
-  /**
-   * Display the specified resource.
-   *
-   * @param  \App\Models\Purchase  $purchase
-   * @return \Illuminate\Http\Response
-   */
   public function show($id)
   {
     $item = Purchase::with('product')->find($id);
@@ -78,44 +61,33 @@ class PurchaseController extends Controller
       ], 404);
     }
   }
-
-  /**
-   * Update the specified resource in storage.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   * @param  \App\Models\Purchase  $purchase
-   * @return \Illuminate\Http\Response
-   */
+  
   public function update(Request $request, Purchase $purchase)
   {
+    if ($purchase->user_id !== $request->user()->id) {
+      return response()->json([
+        'success' => false,
+        'message' => 'Unauthorized',
+      ], 403);
+    }
+
     $update = [
       'content' => $request->content,
     ];
 
     try {
-      $item = Purchase::where('id', $purchase->id)->update($update);
-      if ($item) {
-        return response()->json([
-          'message' => 'Updated successfully',
-        ], 200);
-      } else {
-        return response()->json([
-          'error' => 'Not found',
-        ], 404);
-      }
+      $purchase->update($update);
+
+      return response()->json([
+        'message' => 'Updated successfully',
+      ], 200);
     } catch (Exception $err) {
       return response()->json([
-        'error' => $err,
+        'error' => $err->getMessage(),
       ], 400);
     }
   }
 
-  /**
-   * Remove the specified resource from storage.
-   *
-   * @param  \App\Models\Purchase  $purchase
-   * @return \Illuminate\Http\Response
-   */
   public function destroy(Request $request, Purchase $purchase)
   {
     try {

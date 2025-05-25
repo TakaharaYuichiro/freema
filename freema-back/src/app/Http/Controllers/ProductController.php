@@ -16,12 +16,7 @@ class ProductController extends Controller
     $this->middleware('auth:sanctum')->except(['index', 'show']);
   }
 
-  /**
-   * Display a listing of the resource.
-   *
-   * @return \Illuminate\Http\Response
-   */
-  public function index(Request $request)
+  public function index()
   {
     try {
       $items = Product::with('categories')->withCount('favorites')->withExists('purchases')->get();
@@ -35,12 +30,6 @@ class ProductController extends Controller
     }
   }
 
-  /**
-   * Store a newly created resource in storage.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   * @return \Illuminate\Http\Response
-   */
   public function store(Request $request)
   {
     try {
@@ -57,12 +46,6 @@ class ProductController extends Controller
     }
   }
 
-  /**
-   * Display the specified resource.
-   *
-   * @param  \App\Models\Product  $product
-   * @return \Illuminate\Http\Response
-   */
   public function show($id)
   {
     $item = Product::with('categories')->withExists('purchases')->find($id);
@@ -77,33 +60,28 @@ class ProductController extends Controller
     }
   }
 
-  /**
-   * Update the specified resource in storage.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   * @param  \App\Models\Product  $product
-   * @return \Illuminate\Http\Response
-   */
   public function update(Request $request, Product $product)
   {
+    if ($product->user_id !== $request->user()->id) {
+      return response()->json([
+        'success' => false,
+        'message' => 'Unauthorized',
+      ], 403);
+    }
+
     $update = [
       'content' => $request->content,
     ];
 
     try {
-      $item = Product::where('id', $product->id)->update($update);
-      if ($item) {
-        return response()->json([
-          'message' => 'Updated successfully',
-        ], 200);
-      } else {
-        return response()->json([
-          'error' => 'Not found',
-        ], 404);
-      }
+      $product->update($update);
+
+      return response()->json([
+        'message' => 'Updated successfully',
+      ], 200);
     } catch (Exception $err) {
       return response()->json([
-        'error' => $err,
+        'error' => $err->getMessage(),
       ], 400);
     }
   }

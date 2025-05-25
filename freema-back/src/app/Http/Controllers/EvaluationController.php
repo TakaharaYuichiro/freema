@@ -16,11 +16,6 @@ class EvaluationController extends Controller
     $this->middleware('auth:sanctum')->except(['index', 'show']);
   }
 
-  /**
-   * Display a listing of the resource.
-   *
-   * @return \Illuminate\Http\Response
-   */
   public function index(Request $request)
   {
     if ($request->query() == null) {
@@ -42,12 +37,6 @@ class EvaluationController extends Controller
     }
   }
 
-  /**
-   * Store a newly created resource in storage.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   * @return \Illuminate\Http\Response
-   */
   public function store(Request $request)
   {
     try {
@@ -68,11 +57,6 @@ class EvaluationController extends Controller
     }
   }
 
-  /**
-   * Display the specified resource.
-   *
-   * @return \Illuminate\Http\Response
-   */
   public function show($id)
   {
     $item = Evaluation::with('categories')->find($id);
@@ -87,43 +71,32 @@ class EvaluationController extends Controller
     }
   }
 
-  /**
-   * Update the specified resource in storage.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   * @param  \App\Models\Evaluation  $evaluation
-   * @return \Illuminate\Http\Response
-   */
   public function update(Request $request, Evaluation $evaluation)
   {
+    if ($evaluation->user_id !== $request->user()->id) {
+      return response()->json([
+        'success' => false,
+        'message' => 'Unauthorized',
+      ], 403);
+    }
+
     $update = [
       'content' => $request->content,
     ];
 
     try {
-      $item = Evaluation::where('id', $evaluation->id)->update($update);
-      if ($item) {
-        return response()->json([
-          'message' => 'Updated successfully',
-        ], 200);
-      } else {
-        return response()->json([
-          'error' => 'Not found',
-        ], 404);
-      }
+      $evaluation->update($update);
+
+      return response()->json([
+        'message' => 'Updated successfully',
+      ], 200);
     } catch (Exception $err) {
       return response()->json([
-        'error' => $err,
+        'error' => $err->getMessage(),
       ], 400);
     }
   }
 
-  /**
-   * Remove the specified resource from storage.
-   *
-   * @param  \App\Models\Evaluation  $evaluation
-   * @return \Illuminate\Http\Response
-   */
   public function destroy(Request $request, Evaluation $evaluation)
   {
     try {
