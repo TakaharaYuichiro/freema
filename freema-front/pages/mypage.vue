@@ -226,7 +226,7 @@ const toggleFavorite = async (product_id: number) => {
 }
 
 const usernameText = (name: string) => {
-  const len = 25; 
+  const len = 35; 
   if (!name) return "";
   return (name.length > len)? name.substring(0, len) + "…": name;
 };

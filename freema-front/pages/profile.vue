@@ -78,7 +78,6 @@ const { get, post, put } = useAuth();
 const auth = useAuthStore();
 
 const option = route.query.option || 'new';
-console.log('option: ', option);
 
 const { setValues, meta } = useForm<ProfileFormValues>({
   validationSchema: profileSchema,

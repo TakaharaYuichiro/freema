@@ -94,7 +94,6 @@ const usernameText = (name: string) => {
 <style>
 body {
   margin: 0;
-  /* font-family: 'Meiryo', "ヒラギノ角ゴ Pro W3", "ＭＳ Ｐゴシック", "Osaka", sans-serif; */
   font-family: 'Inter', sans-serif;
   font-weight: normal;
 }

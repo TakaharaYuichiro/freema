@@ -63,8 +63,7 @@ describe('6. 商品検索機能', () => {
         },
       },
     })
-    // renderIndexPage(null);
-
+  
     // 結果の検証
     await waitFor(() => {
       const items = screen.getAllByTestId('product-item--name');

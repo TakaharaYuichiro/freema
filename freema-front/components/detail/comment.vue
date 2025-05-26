@@ -14,8 +14,7 @@
     </div>
 
     <div class="sub-group">
-      <div class="sub-title">みんなのコメント(<span data-testid="product-item--evaluation-count2">{{ evaluations.length
-          }}</span>)</div>
+      <div class="sub-title">みんなのコメント(<span data-testid="product-item--evaluation-count2">{{ evaluations.length }}</span>)</div>
       <div class="comment-container" v-for="evaluation in evaluations" :key="evaluation.id">
         <div class="comment-header">
           <div class="comment-header__info">
@@ -23,7 +22,7 @@
               <img class="comment-header__icon__img" :src="getProductImage(evaluation.user?.img_filename)"
                 @error="onImageError" alt="アイコン" />
             </div>
-            <div class="comment-header__text">{{ evaluation.user?.name }}</div>
+            <div class="comment-header__text">{{ usernameText(evaluation.user?.name) }}</div>
             <div class="comment-header__text">{{ parseDate(evaluation.created_at) }}</div>
           </div>
           <div class="comment-header__button-container" v-if="evaluation.user?.id == auth.user?.id">
@@ -58,7 +57,6 @@ const evaluations = ref<Evaluation[]>([]);
 const { meta } = useForm<CommentFormValues>({ validationSchema: commentSchema });
 const isFormValid = computed(() => meta.value.valid);
 
-// const { value: newComment, errorMessage: errorsComment, meta: metaComment } = useField<string>('comment');
 const { value: newComment, errorMessage: errorsComment, meta: metaComment, resetField } = useField<string>('comment');
 
 const readEvaluations = async () => {
@@ -110,7 +108,6 @@ const deleteComment = async (id: number) => {
   try {
     await del(`/evaluations/${id}`);
     await readEvaluations();
-    // newComment.value = '';
     resetField({ value: '' });
   } catch (err) {
     console.error('コメント削除失敗', err);
@@ -140,6 +137,12 @@ const onImageError = (event: Event) => {
   target.src = '/images/defaultImages/user_icon.png'
   target.dataset.errorHandled = 'true'
 }
+
+const usernameText = (name: string) => {
+  const len = 12; 
+  if (!name) return "";
+  return (name.length > len)? name.substring(0, len) + "…": name;
+};
 
 onMounted(async () => {
   await readEvaluations();
@@ -250,7 +253,6 @@ onMounted(async () => {
   overflow-y: scroll;
   overflow-x: hidden;
   overflow-wrap: break-word;
-
   white-space: pre-wrap;
 }
 
