@@ -14,7 +14,7 @@
           <div class="header__user" v-if="showLoginInfo">
             <template v-if="auth.user">
               <div class="header__user__name">
-                <span>ようこそ、{{ auth.user.name }}さん</span>
+                <span>ようこそ、{{ usernameText(auth.user.name) }}さん</span>
               </div>
               <div class="header__user__button-container">
                 <button class="header__user__button" @click="handleLogout" data-testid="logout-button">ログアウト</button>
@@ -83,6 +83,12 @@ const handleGotoHome = () => {
 const handleSearch = () => {
   search.doSearch();
 }
+
+const usernameText = (name: string) => {
+  const len = 12; 
+  if (!name) return "";
+  return (name.length > len)? name.substring(0, len) + "…": name;
+};
 </script>
 
 <style>
@@ -213,6 +219,7 @@ select {
   }
 
   .header__user {
+    justify-content: space-between;
     flex-flow: row;
     height: 30px;
   }
@@ -221,7 +228,6 @@ select {
     text-align: left;
     white-space: nowrap;
     width: auto;
-    height: 25px;
     padding-left: 18px;
     display: flex;
     align-items: center;
@@ -232,14 +238,17 @@ select {
     align-items: center;
     justify-content: end;
     height: 25px;
-    padding-right: 0px;
+    padding-right: 15px;
   }
 }
 
-@media screen and (max-width: 480px) {
+@media screen and (max-width: 520px) {
   .header__user {
     flex-flow: column;
-    height: 60px;
+    height: auto;
+    gap: 2px;
+    justify-content:flex-start;
+    padding-bottom: 4px;
   }
 
   .header__user__button-container {

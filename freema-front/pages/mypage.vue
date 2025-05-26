@@ -1,14 +1,14 @@
 <template>
   <div class="main-container">
     <div class="profile-section">
-      <div class="profile">
-        <div class="profile__image-container">
-          <img class="profile__img" :src="imageSrc" alt="画像プレビュー" />
-        </div>
-        <div class="prfile__name"><span data-testid="user-name">{{ auth.user.name }}</span>さん</div>
+      <div class="profile__image-container">
+        <img class="profile__img" :src="imageSrc" alt="画像プレビュー" />
       </div>
-      <div class="profile-section__button-container">
-        <button class="profile-section__edit-button" @click="handleProfile">プロフィール編集</button>
+      <div class="profile__content-container">
+        <div class="profile__name"><span data-testid="user-name">{{ usernameText(auth.user.name) }}</span>さん</div>
+        <div class="profile-section__button-container">
+          <button class="profile-section__edit-button" @click="handleProfile">プロフィール編集</button>
+        </div>
       </div>
     </div>
 
@@ -225,6 +225,12 @@ const toggleFavorite = async (product_id: number) => {
   }
 }
 
+const usernameText = (name: string) => {
+  const len = 25; 
+  if (!name) return "";
+  return (name.length > len)? name.substring(0, len) + "…": name;
+};
+
 onMounted(async () => {
   const m = route.query.mode;
   if (typeof m === 'string') {
@@ -248,36 +254,40 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  max-width: 550px;
+  max-width: 700px;
   margin: 10px auto 20px;
 }
 
-.profile {
+.profile__content-container {
   display: flex;
   align-items: center;
   gap: 20px;
+  padding:  0 0 0 20px;
 }
 
 .profile__image-container {
   width: 100px;
   height: 100px;
-  border-radius: 50px;
   position: relative;
   overflow: hidden;
+  min-width: 50px;
 }
 
 .profile__img {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit:scale-down;
+  border-radius: 50%;
 }
 
-.prfile__name {
+.profile__name {
   font-size: larger;
   font-weight: 550;
+  max-width: 400px;
+  padding: 10px 0;
 }
 
 .profile-section__button-container {
@@ -381,6 +391,12 @@ onMounted(async () => {
 .slide-right-leave-to {
   transform: translateX(100%);
   opacity: 0;
+}
+
+@media screen and (max-width: 768px) {
+  .profile__content-container {
+    display: block;
+  }
 }
 
 @media screen and (max-width: 480px) {

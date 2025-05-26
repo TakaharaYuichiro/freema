@@ -140,7 +140,7 @@ const onImageError = (event: Event) => {
 .group {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 4px;
   align-items: start;
   margin-bottom: 5px;
 }

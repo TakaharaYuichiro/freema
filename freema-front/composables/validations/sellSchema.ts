@@ -9,7 +9,11 @@ export interface SellFormValues {
 }
 
 export const sellSchema = yup.object({
-  productName: yup.string().min(3, '商品名は3文字以上必要です').required('商品名は必須です'),
+  productName: yup
+    .string()
+    .min(3, '商品名は3文字以上必要です')
+    .required('商品名は必須です')
+    .max(255, '商品名は255文字以内で入力してください'),
   productPrice: yup.number().typeError("数値を入力してください").min(0, "0以上の整数を入力してください").integer("整数を入力してください"),
   conditionIndex: yup.number().min(1, '状態を選択してください'),
   productImage: yup
