@@ -175,11 +175,13 @@
     php artisan storage:link
     ```
 
-13. ダミーデータ画像をstorageにコピーしてください。
+13. 以下のカスタムコマンドを実行してください。
 
     ``` bash
     php artisan custom:copy-default-images
     ```
+
+    > `copy-default-images` は、`resorces/defaultImages` にあるダミーデータ用の画像ファイルをstorageにコピーするカスタムコマンドです。
 
 14. PHPコンテナからログアウトしてください。
 
