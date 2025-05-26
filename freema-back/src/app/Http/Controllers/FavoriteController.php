@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Favorite;
 use Exception;
-use Illuminate\Support\Facades\Log;
 
 class FavoriteController extends Controller
 {

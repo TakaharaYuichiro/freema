@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\Models\Evaluation;
 use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Support\Facades\Log;
 
 class EvaluationController extends Controller
 {
